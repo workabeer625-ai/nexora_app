@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_domain_localizations.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/app_plural.dart';
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/utils/date_formatter.dart';
 import '../../../../core/widgets/app_error_state.dart';
 import '../../../../core/widgets/app_loading_state.dart';
 import '../../../../shared/widgets/app_hint_card.dart';
@@ -116,7 +119,9 @@ class _JoinWorkspacePreviewPageState extends State<JoinWorkspacePreviewPage> {
       if (!mounted) {
         return;
       }
-      messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+      messenger.showSnackBar(
+        SnackBar(content: Text(context.trError(error))),
+      );
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);
@@ -152,7 +157,7 @@ class _JoinWorkspacePreviewPageState extends State<JoinWorkspacePreviewPage> {
 
             if (snapshot.hasError) {
               return AppErrorState(
-                message: snapshot.error.toString(),
+                message: context.trError(snapshot.error),
                 onRetry: _refreshPreview,
               );
             }
@@ -187,7 +192,7 @@ class _JoinWorkspacePreviewPageState extends State<JoinWorkspacePreviewPage> {
                               preview.workspaceDescription.isEmpty
                                   ? context.tr(
                                       en: 'No description provided.',
-                                      ar: 'لا يوجد وصف متوفر.',
+                                      ar: 'لا يوجد وصف بعد.',
                                     )
                                   : preview.workspaceDescription,
                               style: Theme.of(context).textTheme.bodyLarge,
@@ -211,16 +216,22 @@ class _JoinWorkspacePreviewPageState extends State<JoinWorkspacePreviewPage> {
                                   backgroundColor: AppColors.surfaceMuted,
                                 ),
                                 AppStatusBadge(
-                                  label: context.tr(
-                                    en: '${preview.joinCode.remainingUses} approvals left',
-                                    ar: '${preview.joinCode.remainingUses} موافقات متبقية',
+                                  label: context.trCount(
+                                    preview.joinCode.remainingUses,
+                                    enOne: '{n} approval left',
+                                    enOther: '{n} approvals left',
+                                    arZero: 'لا موافقات متبقية',
+                                    arOne: 'موافقة واحدة متبقية',
+                                    arTwo: 'موافقتان متبقيتان',
+                                    arFew: '{n} موافقات متبقية',
+                                    arMany: '{n} موافقة متبقية',
                                   ),
                                   backgroundColor: AppColors.surfaceMuted,
                                 ),
                                 AppStatusBadge(
                                   label: context.tr(
-                                    en: 'Expires ${preview.joinCode.expiresAt.toLocal()}',
-                                    ar: 'ينتهي ${preview.joinCode.expiresAt.toLocal()}',
+                                    en: 'Expires ${AppDateFormatter.shortDate(preview.joinCode.expiresAt)}',
+                                    ar: 'ينتهي في ${AppDateFormatter.shortDate(preview.joinCode.expiresAt)}',
                                   ),
                                   backgroundColor: AppColors.surfaceMuted,
                                   maxWidth: 170,
@@ -270,7 +281,7 @@ class _JoinWorkspacePreviewPageState extends State<JoinWorkspacePreviewPage> {
                                   ),
                                   hintText: context.tr(
                                     en: 'Example: Joining from the product team sprint board.',
-                                    ar: 'مثال: أنضم من لوحة سباق فريق المنتج.',
+                                    ar: 'مثال: أنضم عبر لوحة سبرنت فريق المنتج.',
                                   ),
                                 ),
                               ),
@@ -302,8 +313,8 @@ class _JoinWorkspacePreviewPageState extends State<JoinWorkspacePreviewPage> {
                           ar: 'لماذا توجد هذه الخطوة الإضافية',
                         ),
                         message: context.tr(
-                          en: 'This product does not grant direct access from a raw code. Preview plus approval protects private workspace data while keeping onboarding simple.',
-                          ar: 'هذا المنتج لا يمنح وصولًا مباشرًا من كود خام. فالمعاينة مع الموافقة تحمي بيانات مساحة العمل الخاصة مع إبقاء الانضمام بسيطًا.',
+                          en: 'This product does not grant direct access from a code alone. Preview plus approval protects private workspace data while keeping onboarding simple.',
+                          ar: 'هذا المنتج لا يمنح وصولًا مباشرًا بمجرد الكود. فالمعاينة مع الموافقة تحمي بيانات مساحة العمل الخاصة مع إبقاء الانضمام بسيطًا.',
                         ),
                         accentColor: AppColors.warning,
                         backgroundColor: AppColors.warningSoft,
@@ -392,7 +403,7 @@ class _GuestActions extends StatelessWidget {
           Text(
             context.tr(
               en: 'Continue to request access',
-              ar: 'تابع لطلب الوصول',
+              ar: 'المتابعة لطلب الوصول',
             ),
             style: Theme.of(context).textTheme.titleLarge,
           ),

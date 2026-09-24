@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/app_plural.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/widgets/app_empty_state.dart';
 import '../../../../core/widgets/app_loading_state.dart';
@@ -262,9 +263,15 @@ class AdminDashboardPage extends StatelessWidget {
                                 ar: 'فتح الطلبات',
                               ),
                               onPressed: onOpenRequests,
-                              badgeLabel: context.tr(
-                                en: '$pendingRequests pending',
-                                ar: '$pendingRequests بانتظار',
+                              badgeLabel: context.trCount(
+                                pendingRequests,
+                                enOne: '{n} pending',
+                                enOther: '{n} pending',
+                                arZero: 'لا طلبات قيد الانتظار',
+                                arOne: 'طلب واحد قيد الانتظار',
+                                arTwo: 'طلبان قيد الانتظار',
+                                arFew: '{n} طلبات قيد الانتظار',
+                                arMany: '{n} طلبًا قيد الانتظار',
                               ),
                               badgeColor: pendingRequests > 0
                                   ? AppColors.warningSoft
@@ -279,8 +286,8 @@ class AdminDashboardPage extends StatelessWidget {
                                 ar: 'فتح بنية المساحة',
                               ),
                               description: context.tr(
-                                en: 'Manage current workspace context, member roles, team chat, and the active project surface.',
-                                ar: 'أدر سياق المساحة الحالية وأدوار الأعضاء وشات الفريق وسطح المشروع النشط.',
+                                en: 'Manage current workspace context, member roles, team chat, and the active projects view.',
+                                ar: 'أدر سياق المساحة الحالية وأدوار الأعضاء ودردشة الفريق وعرض المشاريع النشطة.',
                               ),
                               ctaLabel: context.tr(
                                 en: 'Open workspace',
@@ -289,7 +296,7 @@ class AdminDashboardPage extends StatelessWidget {
                               onPressed: openWorkspaceDetail,
                               badgeLabel: context.tr(
                                 en: 'Projects + Team + Chat',
-                                ar: 'المشاريع + الفريق + الشات',
+                                ar: 'المشاريع + الفريق + الدردشة',
                               ),
                               badgeColor: AppColors.infoSoft,
                               iconBackground: AppColors.infoSoft,
@@ -303,7 +310,7 @@ class AdminDashboardPage extends StatelessWidget {
                               ),
                               description: context.tr(
                                 en: 'Go straight to the workspace conversation for approvals, handoffs, and quick admin decisions.',
-                                ar: 'ادخل مباشرة إلى دردشة الفريق للمتابعة السريعة والقرارات الإدارية والتنبيه الفوري.',
+                                ar: 'ادخل مباشرة إلى دردشة الفريق للموافقات وتسليم المهام والقرارات الإدارية السريعة.',
                               ),
                               ctaLabel: context.tr(
                                 en: 'Open chat',
@@ -326,7 +333,7 @@ class AdminDashboardPage extends StatelessWidget {
                               ),
                               description: context.tr(
                                 en: 'Go to workspace controls to regenerate join codes and manage controlled onboarding.',
-                                ar: 'اذهب إلى تحكم المساحة لإعادة إنشاء أكواد الانضمام وإدارة onboarding مضبوط.',
+                                ar: 'انتقل إلى تحكم المساحة لإعادة توليد أكواد الانضمام وإدارة انضمام الأعضاء الجدد.',
                               ),
                               ctaLabel: context.tr(
                                 en: 'Open controls',
@@ -335,7 +342,7 @@ class AdminDashboardPage extends StatelessWidget {
                               onPressed: onOpenWorkspaces,
                               badgeLabel: context.tr(
                                 en: 'Admin controls',
-                                ar: 'تحكم إداري',
+                                ar: 'أدوات الإدارة',
                               ),
                               badgeColor: AppColors.adminSoft,
                               iconBackground: AppColors.adminSoft,
@@ -368,8 +375,8 @@ class AdminDashboardPage extends StatelessWidget {
                               ),
                               value: '${members.length}',
                               caption: context.tr(
-                                en: 'Active people inside the workspace orbit',
-                                ar: 'عدد الأشخاص النشطين داخل مدار المساحة',
+                                en: 'Active people in this workspace',
+                                ar: 'عدد الأشخاص النشطين في مساحة العمل',
                               ),
                               icon: Icons.groups_2_outlined,
                               tintColor: AppColors.adminSoft,
@@ -382,8 +389,8 @@ class AdminDashboardPage extends StatelessWidget {
                               ),
                               value: '$activeProjects',
                               caption: context.tr(
-                                en: 'Streams currently moving through delivery',
-                                ar: 'مسارات تتحرك حاليًا عبر التنفيذ',
+                                en: 'Projects currently moving through delivery',
+                                ar: 'مشاريع تتحرك حاليًا في مرحلة التنفيذ',
                               ),
                               icon: Icons.layers_outlined,
                               tintColor: AppColors.infoSoft,
@@ -413,8 +420,8 @@ class AdminDashboardPage extends StatelessWidget {
                             ar: 'الذكاء التشغيلي',
                           ),
                           subtitle: context.tr(
-                            en: 'A compact read on delivery, access, and growth without scrolling through raw lists.',
-                            ar: 'قراءة مركزة للتنفيذ والوصول والنمو دون التمرير عبر قوائم خام.',
+                            en: 'A compact read on delivery, access, and growth without digging through long lists.',
+                            ar: 'قراءة مركزة للتنفيذ والوصول والنمو دون الغوص في القوائم التفصيلية.',
                           ),
                         ),
                         _MetricGrid(
@@ -425,8 +432,8 @@ class AdminDashboardPage extends StatelessWidget {
                                 ar: 'مزيج المشاريع',
                               ),
                               subtitle: context.tr(
-                                en: 'How the workspace portfolio is distributed now.',
-                                ar: 'كيف يتوزع portfolio المشاريع داخل المساحة الآن.',
+                                en: 'How the workspace projects are distributed now.',
+                                ar: 'كيف تتوزع مشاريع المساحة الآن.',
                               ),
                               bars: [
                                 _SignalBarData(
@@ -440,7 +447,7 @@ class AdminDashboardPage extends StatelessWidget {
                                   color: AppColors.primary,
                                 ),
                                 _SignalBarData(
-                                  label: context.tr(en: 'On hold', ar: 'معلقة'),
+                                  label: context.tr(en: 'On hold', ar: 'معلّقة'),
                                   count: onHoldProjects,
                                   color: AppColors.warning,
                                 ),
@@ -457,17 +464,17 @@ class AdminDashboardPage extends StatelessWidget {
                             _SignalPanel(
                               title: context.tr(
                                 en: 'Access flow',
-                                ar: 'تدفق الوصول',
+                                ar: 'حركة الوصول',
                               ),
                               subtitle: context.tr(
                                 en: 'Join traffic, decisions, and queue pressure.',
-                                ar: 'حركة طلبات الانضمام والقرارات وضغط الطابور.',
+                                ar: 'حركة طلبات الانضمام والقرارات وضغط صف الانتظار.',
                               ),
                               bars: [
                                 _SignalBarData(
                                   label: context.tr(
                                     en: 'Pending',
-                                    ar: 'بانتظار',
+                                    ar: 'قيد الانتظار',
                                   ),
                                   count: pendingRequests,
                                   color: AppColors.warning,
@@ -501,7 +508,7 @@ class AdminDashboardPage extends StatelessWidget {
                               ),
                               bars: [
                                 _SignalBarData(
-                                  label: context.tr(en: 'Live', ar: 'حية'),
+                                  label: context.tr(en: 'Live', ar: 'جارية'),
                                   count: liveTasks,
                                   color: AppColors.info,
                                 ),
@@ -538,7 +545,7 @@ class AdminDashboardPage extends StatelessWidget {
                           ),
                           message: context.tr(
                             en: 'Read the queue first, clear blocked work second, then keep join codes fresh when onboarding a new wave of members.',
-                            ar: 'ابدأ بقراءة طابور الطلبات، ثم أزل عوائق التنفيذ، ثم جدّد أكواد الانضمام عند إدخال دفعة جديدة من الأعضاء.',
+                            ar: 'ابدأ بقراءة صف الطلبات، ثم أزل عوائق التنفيذ، ثم جدّد أكواد الانضمام عند إدخال دفعة جديدة من الأعضاء.',
                           ),
                           icon: Icons.radar_outlined,
                           accentColor: AppColors.admin,
@@ -622,9 +629,15 @@ class _AnalyticsHero extends StatelessWidget {
                     foregroundColor: Colors.white,
                   ),
                   AppStatusBadge(
-                    label: context.tr(
-                      en: '$pendingRequests requests waiting',
-                      ar: '$pendingRequests طلبات بانتظار',
+                    label: context.trCount(
+                      pendingRequests,
+                      enOne: '{n} request waiting',
+                      enOther: '{n} requests waiting',
+                      arZero: 'لا طلبات بانتظار المراجعة',
+                      arOne: 'طلب واحد بانتظار المراجعة',
+                      arTwo: 'طلبان بانتظار المراجعة',
+                      arFew: '{n} طلبات بانتظار المراجعة',
+                      arMany: '{n} طلبًا بانتظار المراجعة',
                     ),
                     backgroundColor: Colors.white.withValues(alpha: 0.14),
                     foregroundColor: Colors.white,

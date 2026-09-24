@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_domain_localizations.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/app_services.dart';
@@ -319,39 +320,7 @@ class _TaskEditorDialogState extends State<_TaskEditorDialog> {
   }
 
   String _messageFromError(Object error) {
-    final rawMessage = error is AppException ? error.message : error.toString();
-
-    return switch (rawMessage) {
-      'Task title is required.' => context.tr(
-        en: 'Task title is required.',
-        ar: 'عنوان المهمة مطلوب.',
-      ),
-      'Task title must be at least 2 characters.' => context.tr(
-        en: 'Task title must be at least 2 characters.',
-        ar: 'عنوان المهمة يجب أن يكون من حرفين على الأقل.',
-      ),
-      'Task title must be at most 120 characters.' => context.tr(
-        en: 'Task title must be at most 120 characters.',
-        ar: 'عنوان المهمة يجب ألا يتجاوز 120 حرفاً.',
-      ),
-      'Progress must be between 0 and 100.' => context.tr(
-        en: 'Progress must be between 0 and 100.',
-        ar: 'التقدم يجب أن يكون بين 0 و100.',
-      ),
-      'Due date cannot be earlier than start date.' => context.tr(
-        en: 'Due date cannot be earlier than start date.',
-        ar: 'تاريخ الاستحقاق لا يمكن أن يكون قبل تاريخ البدء.',
-      ),
-      'Assigned user must be an active workspace member.' => context.tr(
-        en: 'Assigned user must be an active workspace member.',
-        ar: 'المستخدم المكلَّف يجب أن يكون عضوًا نشطًا في مساحة العمل.',
-      ),
-      'Blocked tasks require a blocked reason.' => context.tr(
-        en: 'Blocked tasks require a blocked reason.',
-        ar: 'المهام الموقوفة تحتاج إلى سبب واضح للتوقف.',
-      ),
-      _ => rawMessage,
-    };
+    return context.trError(error);
   }
 
   @override
@@ -542,7 +511,7 @@ class _TaskEditorDialogState extends State<_TaskEditorDialog> {
                                       ),
                                       hintText: context.tr(
                                         en: 'Explain what is blocking progress so the team knows what to unblock next.',
-                                        ar: 'اشرح ما الذي يوقف التقدم حتى يعرف الفريق ما الذي يجب فكه أولاً.',
+                                        ar: 'اشرح ما الذي يوقف التقدم حتى يعرف الفريق ما الذي يجب إزالته أولًا.',
                                       ),
                                     ),
                                     validator: (value) {
@@ -564,7 +533,7 @@ class _TaskEditorDialogState extends State<_TaskEditorDialog> {
                             ),
                             subtitle: context.tr(
                               en: 'Choose the right owner from the workspace and set timing without relying on manual IDs.',
-                              ar: 'اختر الشخص المناسب من أعضاء المساحة وحدد التوقيت بدون إدخال معرفات يدوياً.',
+                              ar: 'اختر الشخص المناسب من أعضاء المساحة وحدد التوقيت دون إدخال معرفات يدويًا.',
                             ),
                             child: Column(
                               children: [
@@ -593,7 +562,7 @@ class _TaskEditorDialogState extends State<_TaskEditorDialog> {
                                         ),
                                         message: context.tr(
                                           en: 'Could not load members. You can still save without assigning.',
-                                          ar: 'تعذّر تحميل الأعضاء. لا يزال بإمكانك الحفظ بدون إسناد.',
+                                          ar: 'تعذّر تحميل الأعضاء. لا يزال بإمكانك الحفظ دون إسناد.',
                                         ),
                                         icon: Icons.warning_amber_rounded,
                                       );
@@ -627,7 +596,7 @@ class _TaskEditorDialogState extends State<_TaskEditorDialog> {
                                         helperText: selectedOption == null
                                             ? context.tr(
                                                 en: 'Leave unassigned if the team has not chosen an owner yet.',
-                                                ar: 'اتركها غير مسندة إذا لم يحدد الفريق مسؤولاً بعد.',
+                                                ar: 'اتركها غير مسندة إذا لم يحدد الفريق مسؤولًا بعد.',
                                               )
                                             : _assigneeHelperText(
                                                 context,
@@ -739,7 +708,7 @@ class _TaskEditorDialogState extends State<_TaskEditorDialog> {
                                         _dueDate,
                                         emptyLabel: context.tr(
                                           en: 'No deadline',
-                                          ar: 'بدون موعد',
+                                          ar: 'دون موعد',
                                         ),
                                       ),
                                       icon: Icons.event_outlined,
@@ -1244,7 +1213,7 @@ String? _taskTitleValidator(BuildContext context, String? value) {
   if (trimmed.length > 120) {
     return context.tr(
       en: 'Use 120 characters or fewer.',
-      ar: 'استخدم 120 حرفاً أو أقل.',
+      ar: 'استخدم 120 حرفًا أو أقل.',
     );
   }
 
@@ -1260,7 +1229,7 @@ String? _progressValidator(BuildContext context, String? value) {
   if (parsed == null || parsed < 0 || parsed > 100) {
     return context.tr(
       en: 'Use a number between 0 and 100',
-      ar: 'استخدم رقماً بين 0 و100',
+      ar: 'استخدم رقمًا بين 0 و100',
     );
   }
 

@@ -9,14 +9,13 @@ void main() {
   ) async {
     await tester.pumpWidget(
       NexoraApp(
-        startupState: AppStartupState.connected(
-          appName: '[DEFAULT]',
-          projectId: 'nexora-test-project',
+        startupState: AppStartupState.failed(
+          message: 'Firebase initialization failed unexpectedly.',
         ),
       ),
     );
 
-    expect(find.text('Firebase connected successfully'), findsOneWidget);
-    expect(find.text('Connected'), findsOneWidget);
+    expect(find.text('Firebase startup failed'), findsOneWidget);
+    expect(find.text('Needs Attention'), findsOneWidget);
   });
 }

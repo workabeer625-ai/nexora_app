@@ -1,7 +1,7 @@
 final class AppConstants {
   const AppConstants._();
 
-  static const String appName = 'Nexora Tasks';
+  static const String appName = 'Nexora';
   static const String androidGoogleServicesPath =
       'android/app/google-services.json';
   static const String iosGoogleServiceInfoPath =

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_domain_localizations.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/app_plural.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../core/widgets/app_empty_state.dart';
@@ -84,7 +86,7 @@ class _NotificationsView extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return AppErrorState(message: snapshot.error.toString());
+          return AppErrorState(message: context.trError(snapshot.error));
         }
 
         final notifications = snapshot.data ?? const <AppNotification>[];
@@ -109,9 +111,15 @@ class _NotificationsView extends StatelessWidget {
                 runSpacing: AppSpacing.sm,
                 children: [
                   AppStatusBadge(
-                    label: context.tr(
-                      en: '$unreadCount unread',
-                      ar: '$unreadCount غير مقروءة',
+                    label: context.trCount(
+                      unreadCount,
+                      enOne: '{n} unread',
+                      enOther: '{n} unread',
+                      arZero: 'لا عناصر غير مقروءة',
+                      arOne: 'عنصر غير مقروء',
+                      arTwo: 'عنصران غير مقروءين',
+                      arFew: '{n} عناصر غير مقروءة',
+                      arMany: '{n} عنصرًا غير مقروء',
                     ),
                     backgroundColor: unreadCount == 0
                         ? AppColors.surfaceMuted
@@ -127,7 +135,7 @@ class _NotificationsView extends StatelessWidget {
                             userId,
                           ),
                     child: Text(
-                      context.tr(en: 'Mark all read', ar: 'تحديد الكل كمقروء'),
+                      context.tr(en: 'Mark all read', ar: 'تعيين الكل كمقروء'),
                     ),
                   ),
                 ],
@@ -154,8 +162,8 @@ class _NotificationsView extends StatelessWidget {
                   label: context.tr(en: 'Unread', ar: 'غير المقروء'),
                   value: '$unreadCount',
                   caption: context.tr(
-                    en: 'Updates that still need an explicit read from you.',
-                    ar: 'تحديثات ما زالت تحتاج قراءة صريحة منك.',
+                    en: 'Updates you have not read yet.',
+                    ar: 'تحديثات لم تقرأها بعد.',
                   ),
                   icon: Icons.mark_email_unread_outlined,
                   tintColor: unreadCount == 0
@@ -207,7 +215,7 @@ class _NotificationsView extends StatelessWidget {
                 title: showUnreadOnly
                     ? context.tr(
                         en: 'Nothing unread right now',
-                        ar: 'لا يوجد غير مقروء الآن',
+                        ar: 'لا توجد عناصر غير مقروءة الآن',
                       )
                     : context.tr(
                         en: 'No notifications yet',
@@ -251,7 +259,9 @@ class _NotificationsView extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  notification.title,
+                                  notification.displayTitle(
+                                    context.isArabicLocale,
+                                  ),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleMedium,
@@ -268,7 +278,9 @@ class _NotificationsView extends StatelessWidget {
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           Text(
-                            notification.body,
+                            notification.displayBody(
+                              context.isArabicLocale,
+                            ),
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           const SizedBox(height: AppSpacing.md),
@@ -283,7 +295,8 @@ class _NotificationsView extends StatelessWidget {
                                 backgroundColor: AppColors.surfaceMuted,
                               ),
                               AppStatusBadge(
-                                label: AppDateFormatter.dateTime(
+                                label: AppDateFormatter.dateTimeLocalized(
+                                  context,
                                   notification.createdAt,
                                 ),
                                 backgroundColor: AppColors.surfaceMuted,

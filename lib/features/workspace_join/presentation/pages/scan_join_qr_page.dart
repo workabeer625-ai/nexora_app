@@ -36,10 +36,8 @@ class _ScanJoinQrPageState extends State<ScanJoinQrPage> {
             padding: const EdgeInsets.all(24),
             child: Text(
               context.tr(
-                en:
-                    'Camera scanning is currently supported on Android, iOS, macOS, and web.\n\nTODO: add gallery-based QR import later if needed.',
-                ar:
-                    'المسح بالكاميرا مدعوم حاليًا على Android وiOS وmacOS والويب.\n\nسيتم إضافة الاستيراد من المعرض لاحقًا عند الحاجة.',
+                en: 'Camera scanning is currently supported on Android, iOS, macOS, and web. Use one of these platforms to scan the code.',
+                ar: 'المسح بالكاميرا مدعوم حاليًا على Android وiOS وmacOS والويب. استخدم إحدى هذه المنصات لمسح الكود.',
               ),
               textAlign: TextAlign.center,
             ),
@@ -103,10 +101,8 @@ class _ScanJoinQrPageState extends State<ScanJoinQrPage> {
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     context.tr(
-                      en:
-                          'Point the camera at a Nexora join QR code.\nGallery import is intentionally deferred for now.',
-                      ar:
-                          'وجّه الكاميرا نحو رمز QR الخاص بالانضمام في Nexora.\nتم تأجيل الاستيراد من المعرض مؤقتًا.',
+                      en: 'Point the camera at a Nexora join QR code.',
+                      ar: 'وجّه الكاميرا نحو رمز QR الخاص بالانضمام في Nexora.',
                     ),
                     style: TextStyle(color: Colors.white),
                     textAlign: TextAlign.center,

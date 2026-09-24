@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_domain_localizations.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/app_plural.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../core/widgets/app_error_state.dart';
@@ -55,7 +57,7 @@ class TaskChatPanel extends StatelessWidget {
         title: context.tr(en: 'Task chat', ar: 'محادثة المهمة'),
         subtitle: context.tr(
           en: 'Keep decisions, blockers, and delivery context attached to the task.',
-          ar: 'اجعل القرارات والعوائق وسياق التنفيذ مرتبطًا بهذه المهمة مباشرة.',
+          ar: 'اجعل القرارات والعوائق وسياق التنفيذ مرتبطة بهذه المهمة مباشرة.',
         ),
         emptyTitle: context.tr(
           en: 'Start the discussion around this task',
@@ -178,7 +180,7 @@ class WorkspaceChatTab extends StatelessWidget {
                             Text(
                               context.tr(
                                 en: 'See the room details here, then open the full conversation when you want to chat like a dedicated messaging screen.',
-                                ar: 'شاهد تفاصيل الغرفة هنا، ثم افتح المحادثة الكاملة عندما تريد التحدث في شاشة واضحة ومخصصة مثل تطبيقات الدردشة.',
+                                ar: 'شاهد تفاصيل الغرفة هنا، ثم افتح المحادثة الكاملة للدردشة في شاشة مخصصة.',
                               ),
                               style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(color: AppColors.inkMuted),
@@ -194,17 +196,29 @@ class WorkspaceChatTab extends StatelessWidget {
                     runSpacing: AppSpacing.sm,
                     children: [
                       AppStatusBadge(
-                        label: context.tr(
-                          en: '${workspace.memberCount} members',
-                          ar: '${workspace.memberCount} أعضاء',
+                        label: context.trCount(
+                          workspace.memberCount,
+                          enOne: '{n} member',
+                          enOther: '{n} members',
+                          arZero: 'لا يوجد أعضاء',
+                          arOne: 'عضو واحد',
+                          arTwo: 'عضوان',
+                          arFew: '{n} أعضاء',
+                          arMany: '{n} عضوًا',
                         ),
                         backgroundColor: AppColors.infoSoft,
                         foregroundColor: AppColors.info,
                       ),
                       AppStatusBadge(
-                        label: context.tr(
-                          en: '${messages.length} recent messages',
-                          ar: '${messages.length} رسالة حديثة',
+                        label: context.trCount(
+                          messages.length,
+                          enOne: '{n} recent message',
+                          enOther: '{n} recent messages',
+                          arZero: 'لا رسائل حديثة',
+                          arOne: 'رسالة حديثة واحدة',
+                          arTwo: 'رسالتان حديثتان',
+                          arFew: '{n} رسائل حديثة',
+                          arMany: '{n} رسالة حديثة',
                         ),
                         backgroundColor: AppColors.primarySoft,
                         foregroundColor: AppColors.primaryStrong,
@@ -236,7 +250,7 @@ class WorkspaceChatTab extends StatelessWidget {
                               )
                             : context.tr(
                                 en: 'Available after approval',
-                                ar: 'تتفعل بعد الموافقة',
+                                ar: 'متاحة بعد الموافقة',
                               ),
                       ),
                     ),
@@ -286,7 +300,7 @@ class WorkspaceChatTab extends StatelessWidget {
                               ),
                               const SizedBox(height: AppSpacing.xxs),
                               Text(
-                                AppDateFormatter.dateTime(
+                                AppDateFormatter.dateTimeLocalized(context, 
                                   latestMessage.createdAt,
                                 ),
                                 style: Theme.of(context).textTheme.bodySmall
@@ -320,7 +334,7 @@ class WorkspaceChatTab extends StatelessWidget {
                 ),
                 message: context.tr(
                   en: 'The room is ready. Open the full chat and send the first update, question, or handoff.',
-                  ar: 'الغرفة جاهزة. افتح المحادثة الكاملة وأرسل أول تحديث أو سؤال أو عملية تسليم.',
+                  ar: 'الغرفة جاهزة. افتح المحادثة الكاملة وأرسل أول تحديث أو سؤال أو تسليم.',
                 ),
                 accentColor: AppColors.info,
                 backgroundColor: AppColors.infoSoft,
@@ -359,9 +373,15 @@ class WorkspaceChatPage extends StatelessWidget {
             Text(workspace.name, maxLines: 1, overflow: TextOverflow.ellipsis),
             const SizedBox(height: 2),
             Text(
-              context.tr(
-                en: '${workspace.memberCount} members',
-                ar: '${workspace.memberCount} أعضاء',
+              context.trCount(
+                workspace.memberCount,
+                enOne: '{n} member',
+                enOther: '{n} members',
+                arZero: 'لا يوجد أعضاء',
+                arOne: 'عضو واحد',
+                arTwo: 'عضوان',
+                arFew: '{n} أعضاء',
+                arMany: '{n} عضوًا',
               ),
               style: Theme.of(
                 context,
@@ -545,7 +565,7 @@ class _ChatPanelState extends State<_ChatPanel> {
                 _ChatFooterNotice(
                   message: context.tr(
                     en: 'Access to chat becomes available after you join this workspace.',
-                    ar: 'يتفعل الوصول إلى الدردشة بعد الانضمام إلى هذه المساحة.',
+                    ar: 'يصبح الوصول إلى الدردشة متاحًا بعد الانضمام إلى هذه المساحة.',
                   ),
                 ),
               ],
@@ -597,7 +617,7 @@ class _ChatPanelState extends State<_ChatPanel> {
             if (messagesSnapshot.hasError) {
               return AppSurfaceCard(
                 child: AppErrorState(
-                  message: messagesSnapshot.error.toString(),
+                  message: context.trError(messagesSnapshot.error),
                 ),
               );
             }
@@ -655,7 +675,7 @@ class _ChatPanelState extends State<_ChatPanel> {
                               foregroundColor: AppColors.inkMuted,
                               message: context.tr(
                                 en: 'Workspace is archived. Chat is read-only.',
-                                ar: 'مساحة العمل مؤرشفة. الشات للقراءة فقط.',
+                                ar: 'مساحة العمل مؤرشفة. الدردشة للقراءة فقط.',
                               ),
                             ),
                           Expanded(
@@ -780,7 +800,9 @@ class _ChatPanelState extends State<_ChatPanel> {
       if (!mounted) {
         return;
       }
-      messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+      messenger.showSnackBar(
+        SnackBar(content: Text(context.trError(error))),
+      );
     } finally {
       _composerController.markSending(false);
     }
@@ -907,7 +929,9 @@ class _ChatPanelState extends State<_ChatPanel> {
       if (!mounted) {
         return;
       }
-      messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+      messenger.showSnackBar(
+        SnackBar(content: Text(context.trError(error))),
+      );
     }
   }
 
@@ -1435,7 +1459,7 @@ class _ChatMessageTile extends StatelessWidget {
         ? Colors.white.withValues(alpha: 0.86)
         : AppColors.inkMuted;
     final timestampLabel = _formatTime(context, message.createdAt);
-    final sentLabel = context.tr(en: 'Sent', ar: 'أرسلت');
+    final sentLabel = context.tr(en: 'Sent', ar: 'تم الإرسال');
     final editedLabel = context.tr(en: 'Edited', ar: 'تم التعديل');
     final deletedLabel = context.tr(en: 'Deleted', ar: 'محذوفة');
 
@@ -1733,7 +1757,7 @@ class _ChatMessageTile extends StatelessWidget {
       return '$hour:$minute';
     }
 
-    return '${AppDateFormatter.shortDate(local)} $hour:$minute';
+    return '${AppDateFormatter.shortDateLocalized(context, local)} $hour:$minute';
   }
 }
 
@@ -1832,11 +1856,11 @@ class _ChatComposer extends StatelessWidget {
         !controller.focusNode.hasFocus &&
         controller.mentionSuggestions.isEmpty;
     final placeholder = isEditing
-        ? context.tr(en: 'Refine the message...', ar: 'حدّث الرسالة...')
+        ? context.tr(en: 'Edit the message...', ar: 'حدّث الرسالة...')
         : isWorkspaceChat
         ? context.tr(
             en: 'Share an update, handoff, or quick question...',
-            ar: 'شارك تحديثًا أو عملية تسليم أو سؤالًا سريعًا...',
+            ar: 'شارك تحديثًا أو تسليمًا أو سؤالًا سريعًا...',
           )
         : context.tr(
             en: 'Discuss the task, blocker, or decision...',

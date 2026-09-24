@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../shared/widgets/app_brand_icon.dart';
 import '../../shared/widgets/app_surface_card.dart';
+import '../localization/app_localizations.dart';
 import '../theme/app_tokens.dart';
 
 class AppLoadingState extends StatelessWidget {
-  const AppLoadingState({
-    super.key,
-    this.message = 'Loading...',
-    this.compact = false,
-  });
+  const AppLoadingState({super.key, this.message, this.compact = false});
 
-  final String message;
+  final String? message;
   final bool compact;
 
   @override
@@ -48,7 +45,7 @@ class AppLoadingState extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           Text(
-            message,
+            message ?? context.tr(en: 'Loading...', ar: 'جارٍ التحميل...'),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium,
           ),

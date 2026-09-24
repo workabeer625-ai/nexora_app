@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_domain_localizations.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/app_plural.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../core/widgets/app_empty_state.dart';
@@ -64,7 +66,9 @@ class _JoinRequestsAdminPageState extends State<JoinRequestsAdminPage> {
       if (!mounted) {
         return;
       }
-      messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+      messenger.showSnackBar(
+        SnackBar(content: Text(context.trError(error))),
+      );
     } finally {
       if (mounted) {
         setState(() => _processingIds.remove(requesterUserId));
@@ -100,7 +104,9 @@ class _JoinRequestsAdminPageState extends State<JoinRequestsAdminPage> {
       if (!mounted) {
         return;
       }
-      messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+      messenger.showSnackBar(
+        SnackBar(content: Text(context.trError(error))),
+      );
     } finally {
       if (mounted) {
         setState(() => _processingIds.remove(requesterUserId));
@@ -166,7 +172,7 @@ class _JoinRequestsBody extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return AppErrorState(message: snapshot.error.toString());
+          return AppErrorState(message: context.trError(snapshot.error));
         }
 
         final allRequests = snapshot.data ?? const <WorkspaceJoinRequest>[];
@@ -201,9 +207,15 @@ class _JoinRequestsBody extends StatelessWidget {
                 ar: 'راجع من يريد الوصول ولماذا طلبه، ولا توافق إلا عندما تكون مساحة العمل جاهزة.',
               ),
               trailing: AppStatusBadge(
-                label: context.tr(
-                  en: '$pendingCount pending',
-                  ar: '$pendingCount بانتظار',
+                label: context.trCount(
+                  pendingCount,
+                  enOne: '{n} pending',
+                  enOther: '{n} pending',
+                  arZero: 'لا طلبات قيد الانتظار',
+                  arOne: 'طلب واحد قيد الانتظار',
+                  arTwo: 'طلبان قيد الانتظار',
+                  arFew: '{n} طلبات قيد الانتظار',
+                  arMany: '{n} طلبًا قيد الانتظار',
                 ),
                 backgroundColor: pendingCount == 0
                     ? AppColors.surfaceMuted
@@ -234,7 +246,7 @@ class _JoinRequestsBody extends StatelessWidget {
                 AppMetricCard(
                   label: context.tr(
                     en: 'Pending approvals',
-                    ar: 'الموافقات المعلقة',
+                    ar: 'الموافقات المعلّقة',
                   ),
                   value: '$pendingCount',
                   caption: context.tr(
@@ -262,7 +274,7 @@ class _JoinRequestsBody extends StatelessWidget {
                   value: '$rejectedCount',
                   caption: context.tr(
                     en: 'Requests that were intentionally blocked.',
-                    ar: 'طلبات تم إيقافها عمدًا.',
+                    ar: 'طلبات تم رفضها من الإدارة.',
                   ),
                   icon: Icons.block_rounded,
                   tintColor: AppColors.errorSoft,
@@ -297,7 +309,7 @@ class _JoinRequestsBody extends StatelessWidget {
                 ),
                 message: context.tr(
                   en: 'New requests will appear here when members submit them or when you switch filters.',
-                  ar: 'ستظهر الطلبات الجديدة هنا عندما يرسلها الأعضاء أو عند تغيير التصفية.',
+                  ar: 'ستظهر الطلبات الجديدة هنا عند إرسالها أو عند تغيير التصفية.',
                 ),
                 icon: Icons.fact_check_outlined,
               )
@@ -397,8 +409,8 @@ class _JoinRequestCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           Text(
             context.tr(
-              en: 'Requested ${AppDateFormatter.dateTime(request.requestedAt)}',
-              ar: 'تم الطلب ${AppDateFormatter.dateTime(request.requestedAt)}',
+              en: 'Requested ${AppDateFormatter.dateTimeLocalized(context, request.requestedAt)}',
+              ar: 'تم الطلب ${AppDateFormatter.dateTimeLocalized(context, request.requestedAt)}',
             ),
             style: Theme.of(context).textTheme.bodySmall,
           ),
@@ -451,8 +463,8 @@ class _JoinRequestCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               context.tr(
-                en: 'Reviewed ${AppDateFormatter.dateTime(request.reviewedAt)}',
-                ar: 'تمت المراجعة ${AppDateFormatter.dateTime(request.reviewedAt)}',
+                en: 'Reviewed ${AppDateFormatter.dateTimeLocalized(context, request.reviewedAt)}',
+                ar: 'تمت المراجعة ${AppDateFormatter.dateTimeLocalized(context, request.reviewedAt)}',
               ),
               style: Theme.of(context).textTheme.bodySmall,
             ),

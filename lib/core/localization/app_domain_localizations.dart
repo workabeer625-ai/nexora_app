@@ -24,7 +24,7 @@ extension WorkspaceMemberStatusLocalization on WorkspaceMemberStatus {
     return switch (this) {
       WorkspaceMemberStatus.active => context.tr(en: 'Active', ar: 'نشط'),
       WorkspaceMemberStatus.invited => context.tr(en: 'Invited', ar: 'مدعو'),
-      WorkspaceMemberStatus.removed => context.tr(en: 'Removed', ar: 'مزال'),
+      WorkspaceMemberStatus.removed => context.tr(en: 'Removed', ar: 'مستبعد'),
     };
   }
 }
@@ -43,11 +43,11 @@ extension ProjectStatusLocalization on ProjectStatus {
 extension TaskStatusLocalization on TaskStatus {
   String localizedLabel(BuildContext context) {
     return switch (this) {
-      TaskStatus.todo => context.tr(en: 'To do', ar: 'للعمل'),
+      TaskStatus.todo => context.tr(en: 'To do', ar: 'لم تبدأ'),
       TaskStatus.inProgress => context.tr(en: 'In progress', ar: 'قيد التنفيذ'),
       TaskStatus.blocked => context.tr(en: 'Blocked', ar: 'متوقفة'),
       TaskStatus.inReview => context.tr(en: 'In review', ar: 'قيد المراجعة'),
-      TaskStatus.done => context.tr(en: 'Done', ar: 'منجز'),
+      TaskStatus.done => context.tr(en: 'Done', ar: 'منجزة'),
     };
   }
 }
@@ -66,10 +66,10 @@ extension TaskPriorityLocalization on TaskPriority {
 extension ReviewStatusLocalization on ReviewStatus {
   String localizedLabel(BuildContext context) {
     return switch (this) {
-      ReviewStatus.none => context.tr(en: 'None', ar: 'لا يوجد'),
-      ReviewStatus.pending => context.tr(en: 'Pending', ar: 'بانتظار'),
-      ReviewStatus.approved => context.tr(en: 'Approved', ar: 'مقبول'),
-      ReviewStatus.rejected => context.tr(en: 'Rejected', ar: 'مرفوض'),
+      ReviewStatus.none => context.tr(en: 'None', ar: 'لا توجد'),
+      ReviewStatus.pending => context.tr(en: 'Pending', ar: 'قيد الانتظار'),
+      ReviewStatus.approved => context.tr(en: 'Approved', ar: 'مقبولة'),
+      ReviewStatus.rejected => context.tr(en: 'Rejected', ar: 'مرفوضة'),
     };
   }
 }
@@ -94,7 +94,7 @@ extension WorkspaceJoinRequestStatusLocalization on WorkspaceJoinRequestStatus {
     return switch (this) {
       WorkspaceJoinRequestStatus.pending => context.tr(
         en: 'Pending',
-        ar: 'بانتظار',
+        ar: 'قيد الانتظار',
       ),
       WorkspaceJoinRequestStatus.approved => context.tr(
         en: 'Approved',
@@ -117,7 +117,7 @@ extension WorkspaceJoinRequestViaLocalization on WorkspaceJoinRequestVia {
       ),
       WorkspaceJoinRequestVia.qrScan => context.tr(en: 'QR scan', ar: 'مسح QR'),
       WorkspaceJoinRequestVia.qrGallery => context.tr(
-        en: 'QR gallery',
+        en: 'QR from gallery',
         ar: 'QR من المعرض',
       ),
     };
@@ -207,7 +207,7 @@ extension NotificationTypeLocalization on NotificationType {
         en: 'Task chat',
         ar: 'نقاش المهمة',
       ),
-      NotificationType.chatMention => context.tr(en: 'Mention', ar: 'إشارة'),
+      NotificationType.chatMention => context.tr(en: 'Mention', ar: 'ذكر'),
       NotificationType.reviewRequired => context.tr(
         en: 'Review required',
         ar: 'مراجعة مطلوبة',

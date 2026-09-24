@@ -132,7 +132,7 @@ class _MyTasksPageState extends State<MyTasksPage> {
                   AppEmptyState(
                     title: context.tr(
                       en: 'Nothing in ${_filter.label(context).toLowerCase()}',
-                      ar: 'لا يوجد شيء في ${_filter.label(context)}',
+                      ar: 'لا توجد مهام ضمن «${_filter.label(context)}» حاليًا',
                     ),
                     message: context.tr(
                       en:
@@ -207,7 +207,7 @@ extension on _TaskFilter {
   String label(BuildContext context) {
     return switch (this) {
       _TaskFilter.active => context.tr(en: 'Active', ar: 'نشطة'),
-      _TaskFilter.dueSoon => context.tr(en: 'Due soon', ar: 'قريبة الموعد'),
+      _TaskFilter.dueSoon => context.tr(en: 'Due soon', ar: 'قريبة الاستحقاق'),
       _TaskFilter.blocked => context.tr(en: 'Blocked', ar: 'متوقفة'),
       _TaskFilter.review => context.tr(en: 'In review', ar: 'قيد المراجعة'),
       _TaskFilter.done => context.tr(en: 'Done', ar: 'منجزة'),

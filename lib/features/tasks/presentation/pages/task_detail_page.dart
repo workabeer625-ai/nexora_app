@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_domain_localizations.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_tokens.dart';
@@ -62,7 +63,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
 
         if (snapshot.hasError) {
           return Scaffold(
-            body: AppErrorState(message: snapshot.error.toString()),
+            body: AppErrorState(message: context.trError(snapshot.error)),
           );
         }
 
@@ -184,7 +185,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                   en: 'Due date',
                                   ar: 'موعد الاستحقاق',
                                 ),
-                                value: AppDateFormatter.shortDate(task.dueDate),
+                                value: AppDateFormatter.shortDateLocalized(context, task.dueDate),
                                 caption: isTaskOverdue(task)
                                     ? context.tr(
                                         en: 'This task is overdue',
@@ -214,7 +215,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                               AppMetricCard(
                                 label: context.tr(
                                   en: 'Assignee',
-                                  ar: 'المكلّف',
+                                  ar: 'المكلَّف',
                                 ),
                                 value: compactUserLabel(
                                   task.assignedTo,
@@ -225,7 +226,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                 ),
                                 caption: context.tr(
                                   en: 'Ownership signal for the team',
-                                  ar: 'يوضح مسؤولية التنفيذ داخل الفريق',
+                                  ar: 'مؤشر المسؤولية للفريق',
                                 ),
                                 icon: Icons.person_outline_rounded,
                                 tintColor: AppColors.infoSoft,
@@ -244,7 +245,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                     : task.reviewStatus.localizedLabel(context),
                                 caption: context.tr(
                                   en: 'Approval or review requirement',
-                                  ar: 'يوضح ما إذا كانت المهمة تحتاج مراجعة أو اعتمادًا',
+                                  ar: 'متطلبات المراجعة أو الاعتماد',
                                 ),
                                 icon: Icons.fact_check_outlined,
                                 tintColor: reviewStatusTint(task.reviewStatus),
@@ -317,7 +318,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                         en: 'Start date',
                                         ar: 'تاريخ البدء',
                                       ),
-                                      value: AppDateFormatter.shortDate(
+                                      value: AppDateFormatter.shortDateLocalized(context, 
                                         task.startDate,
                                       ),
                                     ),
@@ -326,16 +327,16 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                         en: 'Updated',
                                         ar: 'آخر تحديث',
                                       ),
-                                      value: AppDateFormatter.dateTime(
+                                      value: AppDateFormatter.dateTimeLocalized(context, 
                                         task.updatedAt,
                                       ),
                                     ),
                                     _InfoRow(
                                       label: context.tr(
-                                        en: 'Completed',
-                                        ar: 'اكتملت',
+                                        en: 'Completion date',
+                                        ar: 'تاريخ الإنجاز',
                                       ),
-                                      value: AppDateFormatter.dateTime(
+                                      value: AppDateFormatter.dateTimeLocalized(context, 
                                         task.completedAt,
                                       ),
                                     ),
@@ -343,7 +344,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                       _InfoRow(
                                         label: context.tr(
                                           en: 'Blocked reason',
-                                          ar: 'سبب التعطيل',
+                                          ar: 'سبب التوقف',
                                         ),
                                         value:
                                             task.blockedReason ??
@@ -365,17 +366,17 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                             ),
                             subtitle: context.tr(
                               en: 'Keep blockers, clarifications, and @mentions attached to the task so the team never loses context.',
-                              ar: 'أبقِ العوائق والتوضيحات و@mentions مرتبطة بالمهمة حتى لا يفقد الفريق السياق.',
+                              ar: 'أبقِ العوائق والتوضيحات وذكر الزملاء مرتبطة بالمهمة حتى لا يفقد الفريق السياق.',
                             ),
                           ),
                           AppHintCard(
                             title: context.tr(
                               en: 'Use this thread deliberately',
-                              ar: 'استخدم هذا الخيط بوضوح',
+                              ar: 'استخدم هذا النقاش بوعي',
                             ),
                             message: context.tr(
                               en: 'Discuss the work here, mention the right teammate, and keep the final decision visible inside the task instead of scattering it elsewhere.',
-                              ar: 'ناقش العمل هنا، اذكر العضو المناسب، واجعل القرار النهائي ظاهرًا داخل المهمة بدل تشتيته في مكان آخر.',
+                              ar: 'ناقش العمل هنا، اذكر العضو المناسب، واجعل القرار النهائي ظاهرًا داخل المهمة بدلًا من تشتيته في مكان آخر.',
                             ),
                             accentColor: AppColors.info,
                             backgroundColor: AppColors.infoSoft,
@@ -449,7 +450,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
       if (!mounted) {
         return;
       }
-      messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+      messenger.showSnackBar(
+        SnackBar(content: Text(context.trError(error))),
+      );
     }
   }
 
@@ -457,13 +460,13 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     if (task.status == TaskStatus.blocked) {
       return context.tr(
         en: 'This task needs an unblock decision',
-        ar: 'هذه المهمة تحتاج قرارًا لفك التعطيل',
+        ar: 'هذه المهمة تحتاج إلى قرار لإزالة العائق',
       );
     }
     if (task.status == TaskStatus.inReview) {
       return context.tr(
         en: 'Review is the current bottleneck',
-        ar: 'المراجعة هي نقطة الاختناق الحالية',
+        ar: 'المراجعة هي عنق الزجاجة حاليًا',
       );
     }
     if (task.status == TaskStatus.done) {
@@ -478,7 +481,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     if (task.status == TaskStatus.blocked) {
       return context.tr(
         en: 'Surface the blocker clearly, assign the next decision, and use the comment thread for any unblock updates so the team does not lose context.',
-        ar: 'أظهر سبب التعطيل بوضوح، وحدد القرار التالي، واستخدم النقاش لأي تحديثات تخص فك التعطيل حتى لا يفقد الفريق السياق.',
+        ar: 'أظهر سبب التوقف بوضوح، وحدد القرار التالي، واستخدم النقاش لأي تحديثات تخص إزالة العوائق حتى لا يفقد الفريق السياق.',
       );
     }
     if (task.status == TaskStatus.inReview) {
@@ -595,7 +598,7 @@ class _TaskHero extends StatelessWidget {
                       ? context.tr(en: 'No review', ar: 'لا توجد مراجعة')
                       : context.tr(
                           en: 'Review ${task.reviewStatus.localizedLabel(context)}',
-                          ar: 'مراجعة ${task.reviewStatus.localizedLabel(context)}',
+                          ar: 'المراجعة ${task.reviewStatus.localizedLabel(context)}',
                         ),
                   backgroundColor: Colors.white.withValues(alpha: 0.14),
                   foregroundColor: Colors.white,
@@ -643,15 +646,15 @@ class _TaskHero extends StatelessWidget {
                 AppStatusBadge(
                   label: context.tr(
                     en: 'Assignee ${compactUserLabel(task.assignedTo, fallback: 'Unassigned')}',
-                    ar: 'المكلّف ${compactUserLabel(task.assignedTo, fallback: 'غير مسندة')}',
+                    ar: 'المكلَّف ${compactUserLabel(task.assignedTo, fallback: 'غير مسندة')}',
                   ),
                   backgroundColor: Colors.white.withValues(alpha: 0.12),
                   foregroundColor: Colors.white,
                 ),
                 AppStatusBadge(
                   label: context.tr(
-                    en: 'Due ${AppDateFormatter.shortDate(task.dueDate)}',
-                    ar: 'الاستحقاق ${AppDateFormatter.shortDate(task.dueDate)}',
+                    en: 'Due ${AppDateFormatter.shortDateLocalized(context, task.dueDate)}',
+                    ar: 'الاستحقاق ${AppDateFormatter.shortDateLocalized(context, task.dueDate)}',
                   ),
                   backgroundColor: Colors.white.withValues(alpha: 0.12),
                   foregroundColor: Colors.white,

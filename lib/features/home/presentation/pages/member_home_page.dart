@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/app_plural.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/widgets/app_empty_state.dart';
 import '../../../../core/widgets/app_loading_state.dart';
@@ -181,8 +182,8 @@ class MemberHomePage extends StatelessWidget {
                             ar: 'اذهب إلى مهامي',
                           ),
                           description: context.tr(
-                            en: 'Open the raw execution queue, update status, and focus on what needs action now.',
-                            ar: 'افتح صف التنفيذ المباشر، حدّث الحالات، وركّز على ما يحتاج إجراء الآن.',
+                            en: 'Open the full execution queue, update status, and focus on what needs action now.',
+                            ar: 'افتح قائمة التنفيذ الكاملة، وحدّث الحالات، وركّز على ما يحتاج إلى إجراء الآن.',
                           ),
                           ctaLabel: context.tr(
                             en: 'Open my tasks',
@@ -204,8 +205,8 @@ class MemberHomePage extends StatelessWidget {
                             ar: 'افتح سياق المساحة',
                           ),
                           description: context.tr(
-                            en: 'See projects, team context, and workspace chat without leaving your current orbit.',
-                            ar: 'شاهد المشاريع وسياق الفريق وشات المساحة دون مغادرة مسارك الحالي.',
+                            en: 'See projects, team context, and workspace chat without losing your current context.',
+                            ar: 'شاهد المشاريع وسياق الفريق ودردشة المساحة دون أن تفقد سياقك الحالي.',
                           ),
                           ctaLabel: context.tr(
                             en: 'Open workspace',
@@ -227,8 +228,8 @@ class MemberHomePage extends StatelessWidget {
                             ar: 'فتح عرض المساحة الكامل',
                           ),
                           description: context.tr(
-                            en: 'Jump directly into the detailed workspace surface when you need deeper context or team chat.',
-                            ar: 'انتقل مباشرة إلى عرض المساحة التفصيلي عندما تحتاج سياقًا أعمق أو شات الفريق.',
+                            en: 'Jump directly into the detailed workspace view when you need deeper context or team chat.',
+                            ar: 'انتقل مباشرة إلى عرض المساحة التفصيلي عندما تحتاج سياقًا أعمق أو دردشة الفريق.',
                           ),
                           ctaLabel: context.tr(
                             en: 'Launch detail',
@@ -425,8 +426,8 @@ class MemberHomePage extends StatelessWidget {
                               const SizedBox(height: AppSpacing.sm),
                               Text(
                                 context.tr(
-                                  en: 'This home surface is now signal-only. Use My Tasks for the raw queue and keep this page for fast orientation.',
-                                  ar: 'هذه الصفحة أصبحت معتمدة على الإشارات فقط. استخدم مهامي للصف الخام، واترك هذه الصفحة للتموضع السريع.',
+                                  en: 'This home page now shows signals only. Use My Tasks for the full queue and keep this page for fast orientation.',
+                                  ar: 'هذه الصفحة تعرض الإشارات فقط. استخدم صفحة مهامي لقائمة العمل الكاملة، واترك هذه الصفحة للاطلاع السريع.',
                                 ),
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
@@ -448,7 +449,7 @@ class MemberHomePage extends StatelessWidget {
                               _InsightLine(
                                 title: context.tr(
                                   en: 'Items closing soon',
-                                  ar: 'عناصر تغلق قريبًا',
+                                  ar: 'عناصر على وشك الاكتمال',
                                 ),
                                 value: '$dueSoon',
                               ),
@@ -461,7 +462,7 @@ class MemberHomePage extends StatelessWidget {
                     AppHintCard(
                       title: context.tr(
                         en: 'How to use this home',
-                        ar: 'كيف تستخدم هذه الرئيسية',
+                        ar: 'كيف تستخدم هذه الصفحة',
                       ),
                       message: context.tr(
                         en: 'Read alerts here, then open My Tasks to continue your work. Use Workspaces when you need the bigger picture.',
@@ -538,14 +539,20 @@ class _MemberHero extends StatelessWidget {
                 runSpacing: AppSpacing.sm,
                 children: [
                   AppStatusBadge(
-                    label: context.tr(en: 'Focus field', ar: 'حقل التركيز'),
+                    label: context.tr(en: 'Focus field', ar: 'مجال التركيز'),
                     backgroundColor: Colors.white.withValues(alpha: 0.14),
                     foregroundColor: Colors.white,
                   ),
                   AppStatusBadge(
-                    label: context.tr(
-                      en: '$assignedTaskCount active items',
-                      ar: '$assignedTaskCount عناصر نشطة',
+                    label: context.trCount(
+                      assignedTaskCount,
+                      enOne: '{n} active item',
+                      enOther: '{n} active items',
+                      arZero: 'لا عناصر نشطة',
+                      arOne: 'عنصر نشط واحد',
+                      arTwo: 'عنصران نشطان',
+                      arFew: '{n} عناصر نشطة',
+                      arMany: '{n} عنصرًا نشطًا',
                     ),
                     backgroundColor: Colors.white.withValues(alpha: 0.14),
                     foregroundColor: Colors.white,

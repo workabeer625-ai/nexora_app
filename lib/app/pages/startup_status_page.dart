@@ -49,7 +49,7 @@ class StartupStatusPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
-                      startupState.statusLabel,
+                      startupState.statusLabelL10n(context),
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: color,
                         fontWeight: FontWeight.w700,
@@ -58,14 +58,14 @@ class StartupStatusPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 18),
                   Text(
-                    startupState.title,
+                    startupState.titleL10n(context),
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    startupState.message,
+                    startupState.messageL10n(context),
                     style: theme.textTheme.bodyLarge?.copyWith(height: 1.5),
                   ),
                   if (startupState.details != null) ...[

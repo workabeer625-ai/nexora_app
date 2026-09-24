@@ -4,8 +4,10 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../app/app_scope.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_domain_localizations.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/app_plural.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../core/widgets/app_empty_state.dart';
@@ -65,7 +67,9 @@ class _WorkspaceInvitePanelState extends State<WorkspaceInvitePanel> {
       if (!mounted) {
         return;
       }
-      messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+      messenger.showSnackBar(
+        SnackBar(content: Text(context.trError(error))),
+      );
     } finally {
       if (mounted) {
         setState(() => _isBusy = false);
@@ -126,7 +130,9 @@ class _WorkspaceInvitePanelState extends State<WorkspaceInvitePanel> {
         return;
       }
 
-      messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+      messenger.showSnackBar(
+        SnackBar(content: Text(context.trError(error))),
+      );
     }
   }
 
@@ -157,7 +163,9 @@ class _WorkspaceInvitePanelState extends State<WorkspaceInvitePanel> {
         return;
       }
 
-      messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+      messenger.showSnackBar(
+        SnackBar(content: Text(context.trError(error))),
+      );
     }
   }
 
@@ -179,7 +187,7 @@ class _WorkspaceInvitePanelState extends State<WorkspaceInvitePanel> {
           AppHintCard(
             title: context.tr(
               en: 'Recommended admin flow',
-              ar: 'تدفق إداري مقترح',
+              ar: 'مسار إداري مقترح',
             ),
             message: context.tr(
               en: 'Use short-lived codes for campaigns, single-use codes for sensitive onboarding, and regenerate whenever a code is shared too broadly.',
@@ -300,7 +308,7 @@ class _WorkspaceInvitePanelState extends State<WorkspaceInvitePanel> {
               }
 
               if (snapshot.hasError) {
-                return AppErrorState(message: snapshot.error.toString());
+                return AppErrorState(message: context.trError(snapshot.error));
               }
 
               final codes = snapshot.data ?? const <WorkspaceJoinCode>[];
@@ -389,7 +397,7 @@ class _JoinCodeCard extends StatelessWidget {
         ? context.tr(en: 'Expired', ar: 'منتهي')
         : code.isExhausted
         ? context.tr(en: 'Used up', ar: 'مستهلك')
-        : context.tr(en: 'Active', ar: 'مفعل');
+        : context.tr(en: 'Active', ar: 'نشط');
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -544,12 +552,18 @@ class _JoinCodeSummaryPanel extends StatelessWidget {
               runSpacing: AppSpacing.xs,
               children: [
                 AppStatusBadge(
-                  label: context.tr(
-                    en: '${code.usedCount} used',
-                    ar: 'المستخدم ${code.usedCount}',
+                  label: context.trCount(
+                    code.usedCount,
+                    enOne: '{n} used',
+                    enOther: '{n} used',
+                    arZero: 'لم يُستخدم بعد',
+                    arOne: 'استُخدم مرة واحدة',
+                    arTwo: 'استُخدم مرتين',
+                    arFew: 'استُخدم {n} مرات',
+                    arMany: 'استُخدم {n} مرة',
                   ),
                   backgroundColor: AppColors.surfaceMuted,
-                  maxWidth: 124,
+                  maxWidth: 180,
                 ),
                 AppStatusBadge(
                   label: context.tr(
@@ -577,8 +591,8 @@ class _JoinCodeSummaryPanel extends StatelessWidget {
                 Expanded(
                   child: Text(
                     context.tr(
-                      en: 'Expires on ${AppDateFormatter.shortDate(code.expiresAt)}',
-                      ar: 'ينتهي في ${AppDateFormatter.shortDate(code.expiresAt)}',
+                      en: 'Expires on ${AppDateFormatter.shortDateLocalized(context, code.expiresAt)}',
+                      ar: 'ينتهي في ${AppDateFormatter.shortDateLocalized(context, code.expiresAt)}',
                     ),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),

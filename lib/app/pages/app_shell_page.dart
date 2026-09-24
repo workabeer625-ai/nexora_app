@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/errors/error_messages.dart';
 import '../../core/localization/app_localizations.dart';
+import '../../core/widgets/app_error_state.dart';
 import '../../core/widgets/app_loading_state.dart';
 import '../../features/workspace_join/presentation/pages/guest_landing_page.dart';
 import '../app_scope.dart';
@@ -69,14 +71,8 @@ class _AuthenticatedGate extends StatelessWidget {
 
         if (snapshot.hasError) {
           return Scaffold(
-            body: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  snapshot.error.toString(),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+            body: AppErrorState(
+              message: context.trError(snapshot.error),
             ),
           );
         }

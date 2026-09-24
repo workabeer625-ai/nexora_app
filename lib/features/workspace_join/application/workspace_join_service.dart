@@ -157,8 +157,11 @@ final class WorkspaceJoinService {
         userId: requesterUserId,
         type: NotificationType.joinRequestApproved,
         title: 'Join request approved',
+        titleAr: 'تمت الموافقة على طلب الانضمام',
         body:
             'Your request to join ${workspace?.name ?? 'this workspace'} was approved.',
+        bodyAr:
+            'تمت الموافقة على طلب انضمامك إلى ${workspace?.name ?? 'مساحة العمل'}.',
         entityType: NotificationEntityType.workspace,
         entityId: workspaceId,
         isRead: false,
@@ -184,8 +187,11 @@ final class WorkspaceJoinService {
         userId: requesterUserId,
         type: NotificationType.joinRequestRejected,
         title: 'Join request rejected',
+        titleAr: 'تم رفض طلب الانضمام',
         body:
             'Your request to join ${workspace?.name ?? 'this workspace'} was not approved.',
+        bodyAr:
+            'لم تتم الموافقة على طلب انضمامك إلى ${workspace?.name ?? 'مساحة العمل'}.',
         entityType: NotificationEntityType.workspace,
         entityId: workspaceId,
         isRead: false,

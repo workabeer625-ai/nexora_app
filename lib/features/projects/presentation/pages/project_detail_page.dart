@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_domain_localizations.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/app_plural.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../core/widgets/app_empty_state.dart';
@@ -63,7 +65,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
 
         if (snapshot.hasError) {
           return Scaffold(
-            body: AppErrorState(message: snapshot.error.toString()),
+            body: AppErrorState(message: context.trError(snapshot.error)),
           );
         }
 
@@ -124,7 +126,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
 
                           if (taskSnapshot.hasError) {
                             return AppErrorState(
-                              message: taskSnapshot.error.toString(),
+                              message: context.trError(taskSnapshot.error),
                             );
                           }
 
@@ -157,7 +159,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                 title: project.name,
                                 eyebrow: context.tr(
                                   en: 'Project command layer',
-                                  ar: 'طبقة قيادة المشروع',
+                                  ar: 'مركز قيادة المشروع',
                                 ),
                                 accentGradient: canManage
                                     ? AppColors.adminHeroGradient
@@ -182,9 +184,15 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                     project.status.localizedLabel(context),
                                     if (membership != null)
                                       membership.role.localizedLabel(context),
-                                    context.tr(
-                                      en: '$completedCount completed',
-                                      ar: '$completedCount مكتملة',
+                                    context.trCount(
+                                      completedCount,
+                                      enOne: '{n} completed',
+                                      enOther: '{n} completed',
+                                      arZero: 'لا مهام مكتملة',
+                                      arOne: 'مهمة مكتملة واحدة',
+                                      arTwo: 'مهمتان مكتملتان',
+                                      arFew: '{n} مهام مكتملة',
+                                      arMany: '{n} مهمة مكتملة',
                                     ),
                                   ],
                                 ),
@@ -210,7 +218,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                     value: '${tasks.length}',
                                     caption: context.tr(
                                       en: 'Everything tracked in this project',
-                                      ar: 'كل ما يتم تتبعه داخل هذا المشروع',
+                                      ar: 'كل ما يتتبعه الفريق في هذا المشروع',
                                     ),
                                     icon: Icons.format_list_bulleted_rounded,
                                   ),
@@ -222,7 +230,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                     value: '$completedCount',
                                     caption: context.tr(
                                       en: 'Delivered items already closed',
-                                      ar: 'عناصر تم إنجازها وإغلاقها بالفعل',
+                                      ar: 'عناصر أُنجزت وسُلّمت بالفعل',
                                     ),
                                     icon: Icons.check_circle_outline_rounded,
                                     tintColor: AppColors.successSoft,
@@ -253,9 +261,15 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                             en: 'No due-soon items right now',
                                             ar: 'لا توجد عناصر قريبة الاستحقاق الآن',
                                           )
-                                        : context.tr(
-                                            en: '$dueSoonCount due soon',
-                                            ar: '$dueSoonCount قريبة الاستحقاق',
+                                        : context.trCount(
+                                            dueSoonCount,
+                                            enOne: '{n} due soon',
+                                            enOther: '{n} due soon',
+                                            arZero: 'لا عناصر قريبة الاستحقاق',
+                                            arOne: 'عنصر قريب الاستحقاق',
+                                            arTwo: 'عنصران قريبا الاستحقاق',
+                                            arFew: '{n} عناصر قريبة الاستحقاق',
+                                            arMany: '{n} عنصرًا قريب الاستحقاق',
                                           ),
                                     icon: Icons.track_changes_outlined,
                                     tintColor: AppColors.infoSoft,
@@ -271,13 +285,13 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                         ar: 'عرض الإدارة',
                                       )
                                     : context.tr(
-                                        en: 'Member focus',
-                                        ar: 'تركيز العضو',
+                                        en: 'Member view',
+                                        ar: 'عرض العضو',
                                       ),
                                 message: canManage
                                     ? context.tr(
                                         en: 'Use this page to keep execution healthy: watch blocked work, tighten priorities, and seed the next tasks without clutter.',
-                                        ar: 'استخدم هذه الصفحة للحفاظ على صحة التنفيذ: راقب الأعمال المتوقفة، واضبط الأولويات، وأطلق المهام التالية بدون تشويش.',
+                                        ar: 'استخدم هذه الصفحة للحفاظ على صحة التنفيذ: راقب الأعمال المتوقفة، واضبط الأولويات، وأضف المهام التالية دون تشتيت.',
                                       )
                                     : context.tr(
                                         en: 'This page is organized around what matters now: open tasks, what is assigned to you, and where delivery might stall.',
@@ -348,11 +362,11 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                   message: canContribute
                                       ? context.tr(
                                           en: 'Create the first task to turn this project from intent into execution.',
-                                          ar: 'أنشئ أول مهمة لتحويل هذا المشروع من نية إلى تنفيذ فعلي.',
+                                          ar: 'أنشئ أول مهمة لتحويل هذا المشروع من فكرة إلى تنفيذ فعلي.',
                                         )
                                       : context.tr(
                                           en: 'Tasks will appear here once the team starts breaking delivery into actionable work.',
-                                          ar: 'ستظهر المهام هنا عندما يبدأ الفريق بتقسيم التنفيذ إلى أعمال قابلة للتنفيذ.',
+                                          ar: 'ستظهر المهام هنا عندما يبدأ الفريق بتقسيم التنفيذ إلى مهام قابلة للتنفيذ.',
                                         ),
                                   icon: Icons.assignment_outlined,
                                   action: canContribute
@@ -461,7 +475,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
         actionLabel: context.tr(en: 'Create task', ar: 'إنشاء مهمة'),
         helperText: context.tr(
           en: 'Define the outcome clearly so the assignee understands what done means without reading extra chat or comments.',
-          ar: 'عرّف النتيجة بوضوح حتى يفهم المكلّف ماذا يعني الإنجاز دون الحاجة لقراءة محادثات إضافية أو تعليقات متفرقة.',
+          ar: 'عرّف النتيجة بوضوح حتى يفهم المكلَّف ماذا يعني الإنجاز دون الحاجة لقراءة محادثات إضافية أو تعليقات متفرقة.',
         ),
         onSubmit: (values) async {
           await services.taskManagementService.createTask(
@@ -485,7 +499,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
       if (!mounted) {
         return;
       }
-      messenger.showSnackBar(SnackBar(content: Text(error.toString())));
+      messenger.showSnackBar(
+        SnackBar(content: Text(context.trError(error))),
+      );
     }
   }
 }
@@ -569,7 +585,7 @@ class _ProjectHero extends StatelessWidget {
               project.description.isEmpty
                   ? context.tr(
                       en: 'This project does not have a description yet. Add one so contributors understand the scope quickly.',
-                      ar: 'لا يملك هذا المشروع وصفًا بعد. أضف وصفًا حتى يفهم المساهمون النطاق بسرعة.',
+                      ar: 'لا يوجد وصف لهذا المشروع بعد. أضف وصفًا حتى يفهم المساهمون النطاق بسرعة.',
                     )
                   : project.description,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -582,17 +598,23 @@ class _ProjectHero extends StatelessWidget {
               runSpacing: AppSpacing.sm,
               children: [
                 AppStatusBadge(
-                  label: context.tr(
-                    en: '$taskCount tracked tasks',
-                    ar: '$taskCount مهام متتبعة',
+                  label: context.trCount(
+                    taskCount,
+                    enOne: '{n} tracked task',
+                    enOther: '{n} tracked tasks',
+                    arZero: 'لا مهام',
+                    arOne: 'مهمة واحدة',
+                    arTwo: 'مهمتان',
+                    arFew: '{n} مهام',
+                    arMany: '{n} مهمة',
                   ),
                   backgroundColor: Colors.white.withValues(alpha: 0.12),
                   foregroundColor: Colors.white,
                 ),
                 AppStatusBadge(
                   label: context.tr(
-                    en: 'Created ${AppDateFormatter.dateTime(project.createdAt)}',
-                    ar: 'أُنشئ ${AppDateFormatter.dateTime(project.createdAt)}',
+                    en: 'Created ${AppDateFormatter.dateTimeLocalized(context, project.createdAt)}',
+                    ar: 'أُنشئ ${AppDateFormatter.dateTimeLocalized(context, project.createdAt)}',
                   ),
                   backgroundColor: Colors.white.withValues(alpha: 0.12),
                   foregroundColor: Colors.white,
@@ -746,7 +768,7 @@ class _ProjectTaskCard extends StatelessWidget {
               children: [
                 _TaskMeta(
                   icon: Icons.person_outline_rounded,
-                  label: context.tr(en: 'Assignee', ar: 'المكلّف'),
+                  label: context.tr(en: 'Assignee', ar: 'المكلَّف'),
                   value: compactUserLabel(
                     task.assignedTo,
                     fallback: context.tr(en: 'Unassigned', ar: 'غير مسندة'),
@@ -755,12 +777,12 @@ class _ProjectTaskCard extends StatelessWidget {
                 _TaskMeta(
                   icon: Icons.event_outlined,
                   label: context.tr(en: 'Due', ar: 'الاستحقاق'),
-                  value: AppDateFormatter.shortDate(task.dueDate),
+                  value: AppDateFormatter.shortDateLocalized(context, task.dueDate),
                 ),
                 _TaskMeta(
                   icon: Icons.update_rounded,
                   label: context.tr(en: 'Updated', ar: 'آخر تحديث'),
-                  value: AppDateFormatter.dateTime(task.updatedAt),
+                  value: AppDateFormatter.dateTimeLocalized(context, task.updatedAt),
                 ),
               ],
             ),

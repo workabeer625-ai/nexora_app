@@ -97,13 +97,13 @@ class TaskOverviewCard extends StatelessWidget {
           runSpacing: AppSpacing.xs,
           children: [
             _Meta(
-              label: context.tr(en: 'Due', ar: 'الموعد'),
-              value: AppDateFormatter.shortDate(task.dueDate),
+              label: context.tr(en: 'Due', ar: 'الاستحقاق'),
+              value: AppDateFormatter.shortDateLocalized(context, task.dueDate),
             ),
             _Meta(
-              label: context.tr(en: 'Assignee', ar: 'المكلّف'),
+              label: context.tr(en: 'Assignee', ar: 'المكلَّف'),
               value: task.assignedTo ??
-                  context.tr(en: 'Unassigned', ar: 'غير مكلّف'),
+                  context.tr(en: 'Unassigned', ar: 'غير مسندة'),
             ),
           ],
         ),

@@ -69,7 +69,7 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
                     ),
                     message: context.tr(
                       en: 'Paste or type the code shared by a workspace admin. Nexora normalizes formatting automatically and shows a safe preview before you request access.',
-                      ar: 'ألصق أو اكتب الكود الذي شاركه مدير مساحة العمل. يقوم Nexora بتنسيقه تلقائيًا ويعرض معاينة آمنة قبل طلب الوصول.',
+                      ar: 'ألصق أو اكتب الكود الذي شاركه مشرف مساحة العمل. ويوحّد Nexora تنسيقه تلقائيًا ويعرض معاينة آمنة قبل طلب الوصول.',
                     ),
                     accentColor: AppColors.info,
                     backgroundColor: AppColors.infoSoft,
@@ -87,11 +87,11 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
                         ),
                         description: context.tr(
                           en: 'Nexora resolves the workspace before sending any request, so you can verify where you are about to join.',
-                          ar: 'يقوم Nexora بحل المساحة قبل إرسال أي طلب، لتتأكد من الجهة التي ستنضم إليها.',
+                          ar: 'يتعرف Nexora على المساحة قبل إرسال أي طلب، لتتأكد من الجهة التي ستنضم إليها.',
                         ),
                         ctaLabel: context.tr(
                           en: 'Enter code below',
-                          ar: 'أدخل الكود بالأسفل',
+                          ar: 'أدخل الكود أدناه',
                         ),
                         onPressed: null,
                         badgeLabel: context.tr(
@@ -108,7 +108,7 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
                         ),
                         description: context.tr(
                           en: 'If typing the code is slow, go back and use the scanner flow for a faster join path.',
-                          ar: 'إذا كان إدخال الكود بطيئًا، ارجع واستخدم مسار الماسح لانضمام أسرع.',
+                          ar: 'إذا كان إدخال الكود بطيئًا، ارجع واستخدم مسح QR لانضمام أسرع.',
                         ),
                         ctaLabel: context.tr(
                           en: 'Use QR flow later',
@@ -143,7 +143,7 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
                           Text(
                             context.tr(
                               en: 'Spaces and dashes are optional. The app resolves the workspace first, then lets you send a join request.',
-                              ar: 'المسافات والشرطات اختيارية. يحل التطبيق مساحة العمل أولًا ثم يتيح لك إرسال طلب الانضمام.',
+                              ar: 'المسافات والشرطات اختيارية. يتعرف التطبيق على مساحة العمل أولًا ثم يتيح لك إرسال طلب الانضمام.',
                             ),
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),

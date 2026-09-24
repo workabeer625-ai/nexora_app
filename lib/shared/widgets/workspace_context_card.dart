@@ -68,8 +68,8 @@ class WorkspaceContextCard extends StatelessWidget {
                       children: [
                         AppStatusBadge(
                           label: isAdminExperience
-                              ? l10n.text(en: 'Admin orbit', ar: 'مدار الإدارة')
-                              : l10n.text(en: 'Member orbit', ar: 'مدار العضو'),
+                              ? l10n.text(en: 'Admin view', ar: 'عرض الإدارة')
+                              : l10n.text(en: 'Member view', ar: 'عرض العضو'),
                           backgroundColor: isAdminExperience
                               ? AppColors.adminSoft
                               : AppColors.memberSoft,
@@ -98,7 +98,7 @@ class WorkspaceContextCard extends StatelessWidget {
                     Text(
                       l10n.text(
                         en: 'A calmer command layer with clearer hierarchy, richer signals, and zero visual noise.',
-                        ar: 'طبقة تحكم أهدأ، بهرمية أوضح، ومؤشرات أغنى، وبدون ضجيج بصري.',
+                        ar: 'طبقة تحكم أهدأ، بهرمية أوضح، ومؤشرات أغنى، ودون ضجيج بصري.',
                       ),
                       style: theme.textTheme.bodyMedium,
                     ),
@@ -170,7 +170,9 @@ class WorkspaceContextCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            l10n.text(en: 'zones', ar: 'مساحات'),
+                            workspaces.length == 1
+                                ? l10n.text(en: 'workspace', ar: 'مساحة عمل')
+                                : l10n.text(en: 'workspaces', ar: 'مساحات عمل'),
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: Colors.white.withValues(alpha: 0.82),
                             ),

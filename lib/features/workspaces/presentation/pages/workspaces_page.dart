@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_domain_localizations.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/app_plural.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/widgets/app_empty_state.dart';
 import '../../../../core/widgets/app_error_state.dart';
@@ -82,7 +84,7 @@ class _WorkspacesView extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return AppErrorState(message: snapshot.error.toString());
+          return AppErrorState(message: context.trError(snapshot.error));
         }
 
         final workspaces = snapshot.data ?? const <Workspace>[];
@@ -143,7 +145,7 @@ class _WorkspacesView extends StatelessWidget {
               title: context.tr(en: 'Why this matters', ar: 'لماذا هذا مهم'),
               message: context.tr(
                 en: 'A clear workspace switcher keeps member and admin actions scoped. That makes the product easier to trust and easier to understand.',
-                ar: 'مبدّل مساحة العمل الواضح يبقي إجراءات العضو والإدمن ضمن سياقها الصحيح، وهذا يجعل المنتج أوضح وأسهل في الثقة.',
+                ar: 'أداة تبديل مساحة العمل الواضحة تُبقي إجراءات العضو والإدارة ضمن سياقها الصحيح، وهذا يجعل المنتج أوضح وأسهل للوثوق به.',
               ),
               accentColor: AppColors.info,
               backgroundColor: AppColors.infoSoft,
@@ -206,7 +208,7 @@ class _WorkspacesView extends StatelessWidget {
                     ),
                     description: context.tr(
                       en: 'Jump into projects, team view, and workspace chat from the selected context.',
-                      ar: 'ادخل إلى المشاريع وعرض الفريق وشات المساحة من السياق المحدد.',
+                      ar: 'ادخل إلى المشاريع وعرض الفريق ودردشة المساحة من السياق المحدد.',
                     ),
                     ctaLabel: context.tr(
                       en: 'Launch detail',
@@ -215,7 +217,7 @@ class _WorkspacesView extends StatelessWidget {
                     onPressed: openSelectedWorkspace,
                     badgeLabel: context.tr(
                       en: 'Projects + Team + Chat',
-                      ar: 'المشاريع + الفريق + الشات',
+                      ar: 'المشاريع + الفريق + الدردشة',
                     ),
                     badgeColor: AppColors.primarySoft,
                   ),
@@ -227,7 +229,7 @@ class _WorkspacesView extends StatelessWidget {
                     ),
                     description: context.tr(
                       en: 'Skip straight to the chat tab when you need team discussion without browsing the other sections first.',
-                      ar: 'ادخل مباشرة إلى تبويب الدردشة عندما تحتاج نقاش الفريق دون المرور على باقي الأقسام أولًا.',
+                      ar: 'ادخل مباشرة إلى تبويب الدردشة عندما تحتاج نقاش الفريق دون المرور على بقية الأقسام أولًا.',
                     ),
                     ctaLabel: context.tr(en: 'Open chat', ar: 'فتح الدردشة'),
                     onPressed: () => openSelectedWorkspace(initialTabIndex: 2),
@@ -342,6 +344,7 @@ class _WorkspacesView extends StatelessWidget {
 
     final services = AppScope.of(context);
     final messenger = ScaffoldMessenger.of(context);
+    final localizeError = context.trError;
 
     await showDialog<void>(
       context: context,
@@ -365,7 +368,7 @@ class _WorkspacesView extends StatelessWidget {
                 }
               } catch (error) {
                 messenger.showSnackBar(
-                  SnackBar(content: Text(error.toString())),
+                  SnackBar(content: Text(localizeError(error))),
                 );
               } finally {
                 setState(() => isBusy = false);
@@ -522,9 +525,15 @@ class _WorkspaceCard extends StatelessWidget {
                   runSpacing: AppSpacing.sm,
                   children: [
                     AppStatusBadge(
-                      label: context.tr(
-                        en: '${workspace.memberCount} members',
-                        ar: '${workspace.memberCount} أعضاء',
+                      label: context.trCount(
+                        workspace.memberCount,
+                        enOne: '{n} member',
+                        enOther: '{n} members',
+                        arZero: 'لا يوجد أعضاء',
+                        arOne: 'عضو واحد',
+                        arTwo: 'عضوان',
+                        arFew: '{n} أعضاء',
+                        arMany: '{n} عضوًا',
                       ),
                       backgroundColor: AppColors.surfaceMuted,
                     ),

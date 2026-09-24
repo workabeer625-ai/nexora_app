@@ -12,7 +12,7 @@ class FirebaseInitializer {
   Future<AppStartupState> initialize() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final showOnboarding = prefs.getBool('onboarding_complete') ?? true;
+      final showOnboarding = !(prefs.getBool('onboarding_complete') ?? false);
 
       final app = Firebase.apps.isEmpty
           ? await Firebase.initializeApp(
@@ -27,16 +27,17 @@ class FirebaseInitializer {
       );
     } on UnsupportedError {
       final prefs = await SharedPreferences.getInstance();
-      final showOnboarding = prefs.getBool('onboarding_complete') ?? true;
+      final showOnboarding = !(prefs.getBool('onboarding_complete') ?? false);
       return AppStartupState.unsupported(
         message:
             'Firebase is configured for Android and iOS in this project. '
             'Add platform-specific setup before running on ${PlatformUtils.currentPlatformLabel}.',
+        platformLabel: PlatformUtils.currentPlatformLabel,
         showOnboarding: showOnboarding,
       );
     } on FirebaseException catch (error) {
       final prefs = await SharedPreferences.getInstance();
-      final showOnboarding = prefs.getBool('onboarding_complete') ?? true;
+      final showOnboarding = !(prefs.getBool('onboarding_complete') ?? false);
       final exception = FirebaseSetupException.fromFirebaseException(error);
       return AppStartupState.failed(
         message: exception.message,
@@ -45,7 +46,7 @@ class FirebaseInitializer {
       );
     } catch (error, stackTrace) {
       final prefs = await SharedPreferences.getInstance();
-      final showOnboarding = prefs.getBool('onboarding_complete') ?? true;
+      final showOnboarding = !(prefs.getBool('onboarding_complete') ?? false);
       final exception = AppException(
         'Firebase initialization failed unexpectedly.',
         details: '$error\n$stackTrace',

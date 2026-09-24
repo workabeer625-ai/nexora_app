@@ -322,8 +322,8 @@ class _WorkspaceAccessExperience extends StatelessWidget {
                           const SizedBox(height: AppSpacing.lg),
                           Text(
                             context.tr(
-                              en: 'Welcome to Nexora Tasks',
-                              ar: 'مرحبًا بك في مهام نكسورا',
+                              en: 'Welcome to Nexora',
+                              ar: 'مرحبًا بك في Nexora',
                             ),
                             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
@@ -335,7 +335,7 @@ class _WorkspaceAccessExperience extends StatelessWidget {
                           Text(
                             context.tr(
                               en: 'Manage your projects and collaborate with your team efficiently.\nGet started by creating a new workspace or joining an existing one.',
-                              ar: 'أدر مشاريعك وتعاون مع فريقك بكفاءة وسهولة.\nابدأ بإنشاء مساحة عمل جديدة أو الانضمام لمساحة موجودة.',
+                              ar: 'أدر مشاريعك وتعاون مع فريقك بكفاءة وسهولة.\nابدأ بإنشاء مساحة عمل جديدة أو الانضمام إلى مساحة موجودة.',
                             ),
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: AppColors.inkMuted,
@@ -351,7 +351,7 @@ class _WorkspaceAccessExperience extends StatelessWidget {
                               ),
                               message: context.tr(
                                 en: 'Your join request is waiting for approval. We will notify you once you are in.',
-                                ar: 'طلب الانضمام الخاص بك بانتظار موافقة المسؤول. سنقوم بإعلامك فور قبوله.',
+                                ar: 'طلب الانضمام الخاص بك بانتظار موافقة المسؤول. سنعلمك فور قبوله.',
                               ),
                               accentColor: AppColors.warning,
                               backgroundColor: AppColors.warningSoft,
@@ -387,7 +387,7 @@ class _WorkspaceAccessExperience extends StatelessWidget {
                                     },
                                     badgeLabel: context.tr(
                                       en: 'For Managers',
-                                      ar: 'للمدراء',
+                                      ar: 'للإدارة',
                                     ),
                                     badgeColor: AppColors.primarySoft,
                                     iconBackground: AppColors.primarySoft,
@@ -400,7 +400,7 @@ class _WorkspaceAccessExperience extends StatelessWidget {
                                     icon: Icons.qr_code_scanner_rounded,
                                     title: context.tr(
                                       en: 'Join Workspace',
-                                      ar: 'الانضمام لمساحة عمل',
+                                      ar: 'الانضمام إلى مساحة عمل',
                                     ),
                                     description: context.tr(
                                       en: 'Use an invite code or scan a QR.',
@@ -465,7 +465,7 @@ List<AppFloatingNavDestination> _memberDestinations(BuildContext context) {
       selectedIcon: Icons.notifications_rounded,
     ),
     AppFloatingNavDestination(
-      label: context.tr(en: 'Profile', ar: 'الملف'),
+      label: context.tr(en: 'Profile', ar: 'حسابي'),
       icon: Icons.person_outline_rounded,
       selectedIcon: Icons.person_rounded,
     ),
@@ -495,7 +495,7 @@ List<AppFloatingNavDestination> _adminDestinations(BuildContext context) {
       selectedIcon: Icons.notifications_rounded,
     ),
     AppFloatingNavDestination(
-      label: context.tr(en: 'Profile', ar: 'الملف'),
+      label: context.tr(en: 'Profile', ar: 'حسابي'),
       icon: Icons.person_outline_rounded,
       selectedIcon: Icons.person_rounded,
     ),

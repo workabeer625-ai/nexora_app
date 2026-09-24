@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../shared/widgets/app_surface_card.dart';
+import '../localization/app_localizations.dart';
 import '../theme/app_tokens.dart';
 
 class AppErrorState extends StatelessWidget {
@@ -8,12 +9,12 @@ class AppErrorState extends StatelessWidget {
     super.key,
     required this.message,
     this.onRetry,
-    this.title = 'Something needs attention',
+    this.title,
   });
 
   final String message;
   final VoidCallback? onRetry;
-  final String title;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,11 @@ class AppErrorState extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
-                title,
+                title ??
+                    context.tr(
+                      en: 'Something needs attention',
+                      ar: 'حدث خطأ يحتاج إلى انتباه',
+                    ),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
@@ -58,7 +63,7 @@ class AppErrorState extends StatelessWidget {
                 FilledButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Retry'),
+                  label: Text(context.tr(en: 'Retry', ar: 'إعادة المحاولة')),
                 ),
               ],
             ],

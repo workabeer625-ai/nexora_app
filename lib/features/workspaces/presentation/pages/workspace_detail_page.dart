@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_domain_localizations.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/app_plural.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/widgets/app_empty_state.dart';
 import '../../../../core/widgets/app_error_state.dart';
@@ -52,7 +54,7 @@ class WorkspaceDetailPage extends StatelessWidget {
         if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(),
-            body: AppErrorState(message: snapshot.error.toString()),
+            body: AppErrorState(message: context.trError(snapshot.error)),
           );
         }
 
@@ -364,8 +366,8 @@ class _WorkspaceHeader extends StatelessWidget {
               children: [
                 AppStatusBadge(
                   label: canManage
-                      ? context.tr(en: 'Admin surface', ar: 'واجهة الإدارة')
-                      : context.tr(en: 'Member surface', ar: 'واجهة العضو'),
+                      ? context.tr(en: 'Admin view', ar: 'عرض الإدارة')
+                      : context.tr(en: 'Member view', ar: 'عرض العضو'),
                   backgroundColor: Colors.white.withValues(alpha: 0.14),
                   foregroundColor: Colors.white,
                   leading: canManage
@@ -405,9 +407,15 @@ class _WorkspaceHeader extends StatelessWidget {
               runSpacing: AppSpacing.sm,
               children: [
                 AppStatusBadge(
-                  label: context.tr(
-                    en: '${workspace.memberCount} members',
-                    ar: '${workspace.memberCount} أعضاء',
+                  label: context.trCount(
+                    workspace.memberCount,
+                    enOne: '{n} member',
+                    enOther: '{n} members',
+                    arZero: 'لا يوجد أعضاء',
+                    arOne: 'عضو واحد',
+                    arTwo: 'عضوان',
+                    arFew: '{n} أعضاء',
+                    arMany: '{n} عضوًا',
                   ),
                   backgroundColor: Colors.white.withValues(alpha: 0.12),
                   foregroundColor: Colors.white,
@@ -481,7 +489,7 @@ class _ProjectsTab extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return AppErrorState(message: snapshot.error.toString());
+          return AppErrorState(message: context.trError(snapshot.error));
         }
 
         final projects = snapshot.data ?? const <Project>[];
@@ -623,6 +631,7 @@ class _ProjectsTab extends StatelessWidget {
     var isBusy = false;
     final services = AppScope.of(context);
     final messenger = ScaffoldMessenger.of(context);
+    final localizeError = context.trError;
 
     await showDialog<void>(
       context: context,
@@ -648,7 +657,7 @@ class _ProjectsTab extends StatelessWidget {
                 }
               } catch (error) {
                 messenger.showSnackBar(
-                  SnackBar(content: Text(error.toString())),
+                  SnackBar(content: Text(localizeError(error))),
                 );
               } finally {
                 setState(() => isBusy = false);
@@ -774,7 +783,7 @@ class _TeamTab extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return AppErrorState(message: snapshot.error.toString());
+          return AppErrorState(message: context.trError(snapshot.error));
         }
 
         final members = snapshot.data ?? const <WorkspaceMember>[];
@@ -810,7 +819,7 @@ class _TeamTab extends StatelessWidget {
               AppHintCard(
                 title: context.tr(
                   en: 'Admin-only management',
-                  ar: 'إدارة خاصة بالإدارة',
+                  ar: 'أدوات الإدارة فقط',
                 ),
                 message: context.tr(
                   en: 'Share join codes here, then review join requests before membership is created. Members do not see these controls.',
@@ -834,7 +843,7 @@ class _TeamTab extends StatelessWidget {
                 ),
                 message: context.tr(
                   en: 'Approved requests and owner setup will create the first active members here.',
-                  ar: 'ستؤدي الطلبات المقبولة وإعداد المالك إلى إنشاء أول أعضاء نشطين هنا.',
+                  ar: 'وسيؤدي قبول الطلبات وإعداد المالك إلى ظهور أول الأعضاء النشطين هنا.',
                 ),
                 icon: Icons.groups_outlined,
               )

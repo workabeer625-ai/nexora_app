@@ -73,6 +73,8 @@ class AppNotification {
     required this.entityType,
     required this.entityId,
     required this.isRead,
+    this.titleAr,
+    this.bodyAr,
     this.createdAt,
   });
 
@@ -81,8 +83,27 @@ class AppNotification {
   final NotificationType type;
   final String title;
   final String body;
+
+  /// Arabic copy stored next to the English one so every user reads
+  /// notifications in their own language. Null for legacy documents.
+  final String? titleAr;
+  final String? bodyAr;
   final NotificationEntityType entityType;
   final String entityId;
   final bool isRead;
   final DateTime? createdAt;
+
+  String displayTitle(bool isArabic) {
+    if (isArabic && titleAr != null && titleAr!.trim().isNotEmpty) {
+      return titleAr!;
+    }
+    return title;
+  }
+
+  String displayBody(bool isArabic) {
+    if (isArabic && bodyAr != null && bodyAr!.trim().isNotEmpty) {
+      return bodyAr!;
+    }
+    return body;
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_scope.dart';
+import '../../../../core/errors/error_messages.dart';
 import '../../../../core/localization/app_language.dart';
 import '../../../../core/localization/app_locale_scope.dart';
 import '../../../../core/localization/app_localizations.dart';
@@ -62,7 +63,7 @@ class _ProfileView extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return AppErrorState(message: snapshot.error.toString());
+          return AppErrorState(message: context.trError(snapshot.error));
         }
 
         final profile = snapshot.data;
@@ -82,7 +83,7 @@ class _ProfileView extends StatelessWidget {
               title: context.tr(en: 'Profile', ar: 'الملف الشخصي'),
               subtitle: context.tr(
                 en: 'Your account details, display identity, and sign-out controls.',
-                ar: 'تفاصيل حسابك، والهوية الظاهرة، وخيارات تسجيل الخروج.',
+                ar: 'تفاصيل حسابك، والهوية المعروضة، وخيارات تسجيل الخروج.',
               ),
               trailing: FilledButton.tonalIcon(
                 onPressed: () => _showEditNameDialog(context, profile),
@@ -143,7 +144,7 @@ class _ProfileView extends StatelessWidget {
               title: context.tr(en: 'Important context', ar: 'معلومة مهمة'),
               message: context.tr(
                 en: 'This profile is your account identity. Workspace permissions such as owner, admin, or member are managed separately inside each workspace.',
-                ar: 'هذا الملف يمثل هوية حسابك. أما صلاحيات مساحة العمل مثل مالك أو إدمن أو عضو فتُدار بشكل مستقل داخل كل مساحة.',
+                ar: 'هذا الملف الشخصي يمثل هوية حسابك. أما صلاحيات مساحة العمل مثل مالك أو مشرف أو عضو فتُدار بشكل مستقل داخل كل مساحة.',
               ),
               accentColor: AppColors.member,
               backgroundColor: AppColors.memberSoft,
@@ -165,11 +166,11 @@ class _ProfileView extends StatelessWidget {
                   ),
                   _ProfileRow(
                     label: context.tr(en: 'Created', ar: 'تم الإنشاء'),
-                    value: AppDateFormatter.dateTime(profile.createdAt),
+                    value: AppDateFormatter.dateTimeLocalized(context, profile.createdAt),
                   ),
                   _ProfileRow(
                     label: context.tr(en: 'Updated', ar: 'آخر تحديث'),
-                    value: AppDateFormatter.dateTime(profile.updatedAt),
+                    value: AppDateFormatter.dateTimeLocalized(context, profile.updatedAt),
                   ),
                 ],
               ),
@@ -179,7 +180,7 @@ class _ProfileView extends StatelessWidget {
               title: context.tr(en: 'Language', ar: 'اللغة'),
               subtitle: context.tr(
                 en: 'Choose how the interface should appear on this device. You can keep it on system, Arabic, or English.',
-                ar: 'اختر لغة الواجهة على هذا الجهاز. يمكنك إبقاؤها حسب النظام أو العربية أو الإنجليزية.',
+                ar: 'اختر لغة الواجهة على هذا الجهاز: حسب النظام أو العربية أو الإنجليزية.',
               ),
             ),
             AppSurfaceCard(
@@ -241,7 +242,7 @@ class _ProfileView extends StatelessWidget {
               title: context.tr(en: 'Appearance', ar: 'المظهر'),
               subtitle: context.tr(
                 en: 'Choose how Nexora should handle light and dark mode on this device.',
-                ar: 'اختر كيف يجب أن يتعامل Nexora مع الوضعين الليلي والنهاري على هذا الجهاز.',
+                ar: 'اختر مظهر التطبيق على هذا الجهاز.',
               ),
             ),
             AppSurfaceCard(
@@ -264,7 +265,7 @@ class _ProfileView extends StatelessWidget {
                         },
                       ),
                       _PreferenceChip(
-                        label: context.tr(en: 'Light', ar: 'نهاري'),
+                        label: context.tr(en: 'Light', ar: 'فاتح'),
                         selected:
                             themeController.preference ==
                             AppThemePreference.light,
@@ -275,7 +276,7 @@ class _ProfileView extends StatelessWidget {
                         },
                       ),
                       _PreferenceChip(
-                        label: context.tr(en: 'Dark', ar: 'ليلي'),
+                        label: context.tr(en: 'Dark', ar: 'داكن'),
                         selected:
                             themeController.preference ==
                             AppThemePreference.dark,
@@ -346,6 +347,7 @@ class _ProfileView extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     final services = AppScope.of(context);
     final messenger = ScaffoldMessenger.of(context);
+    final localizeError = context.trError;
     var isBusy = false;
 
     await showDialog<void>(
@@ -369,7 +371,7 @@ class _ProfileView extends StatelessWidget {
                 }
               } catch (error) {
                 messenger.showSnackBar(
-                  SnackBar(content: Text(error.toString())),
+                  SnackBar(content: Text(localizeError(error))),
                 );
               } finally {
                 setState(() => isBusy = false);
@@ -378,7 +380,7 @@ class _ProfileView extends StatelessWidget {
 
             return AlertDialog(
               title: Text(
-                context.tr(en: 'Update display name', ar: 'تحديث الاسم الظاهر'),
+                context.tr(en: 'Update display name', ar: 'تحديث الاسم المعروض'),
               ),
               content: Form(
                 key: formKey,
@@ -387,11 +389,11 @@ class _ProfileView extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: context.tr(
                       en: 'Display name',
-                      ar: 'الاسم الظاهر',
+                      ar: 'الاسم المعروض',
                     ),
                     helperText: context.tr(
-                      en: 'This name appears across comments, requests, and workspace surfaces.',
-                      ar: 'هذا الاسم يظهر في التعليقات والطلبات ومختلف واجهات مساحة العمل.',
+                      en: 'This name appears across comments, requests, and workspace screens.',
+                      ar: 'هذا الاسم يظهر في التعليقات والطلبات ومختلف شاشات مساحة العمل.',
                     ),
                   ),
                   validator: (value) {
@@ -423,7 +425,7 @@ class _ProfileView extends StatelessWidget {
                   onPressed: isBusy ? null : submit,
                   child: Text(
                     isBusy
-                        ? context.tr(en: 'Saving...', ar: 'يتم الحفظ...')
+                        ? context.tr(en: 'Saving...', ar: 'جارٍ الحفظ...')
                         : context.tr(en: 'Save', ar: 'حفظ'),
                   ),
                 ),
