@@ -77,7 +77,7 @@ final class TaskManagementService {
           title: 'Task assigned',
           titleAr: 'تم إسناد مهمة إليك',
           body: 'You were assigned to ${normalized.title}.',
-          bodyAr: 'تم إسنادك إلى ${normalized.title}.'
+          bodyAr: 'تم إسنادك إلى ${normalized.title}.',
           entityType: NotificationEntityType.task,
           entityId: taskId,
           isRead: false,
@@ -153,7 +153,7 @@ final class TaskManagementService {
           title: 'Task assigned',
           titleAr: 'تم إسناد مهمة إليك',
           body: 'You were assigned to ${normalized.title}.',
-          bodyAr: 'تم إسنادك إلى ${normalized.title}.'
+          bodyAr: 'تم إسنادك إلى ${normalized.title}.',
           entityType: NotificationEntityType.task,
           entityId: currentTask.id,
           isRead: false,
@@ -172,7 +172,7 @@ final class TaskManagementService {
           title: 'Due date updated',
           titleAr: 'تم تحديث موعد الاستحقاق',
           body: 'The due date for ${normalized.title} was updated.',
-          bodyAr: 'تم تحديث موعد استحقاق ${normalized.title}.'
+          bodyAr: 'تم تحديث موعد استحقاق ${normalized.title}.',
           entityType: NotificationEntityType.task,
           entityId: currentTask.id,
           isRead: false,
@@ -195,7 +195,7 @@ final class TaskManagementService {
             title: 'Task status changed',
             titleAr: 'تغيّرت حالة المهمة',
             body: '${normalized.title} is now ${normalized.status.label}.',
-            bodyAr: 'تغيّرت حالة المهمة ${normalized.title}.'
+            bodyAr: 'تغيّرت حالة المهمة ${normalized.title}.',
             entityType: NotificationEntityType.task,
             entityId: currentTask.id,
             isRead: false,
@@ -219,7 +219,7 @@ final class TaskManagementService {
             title: 'Review required',
             titleAr: 'مراجعة مطلوبة',
             body: '${normalized.title} moved to review.',
-            bodyAr: 'انتقلت ${normalized.title} إلى المراجعة.'
+            bodyAr: 'انتقلت ${normalized.title} إلى المراجعة.',
             entityType: NotificationEntityType.task,
             entityId: currentTask.id,
             isRead: false,
@@ -265,7 +265,7 @@ final class TaskManagementService {
           title: 'New task comment',
           titleAr: 'تعليق جديد على المهمة',
           body: 'A new comment was added to ${task.title}.',
-          bodyAr: 'تمت إضافة تعليق جديد على ${task.title}.'
+          bodyAr: 'تمت إضافة تعليق جديد على ${task.title}.',
           entityType: NotificationEntityType.task,
           entityId: task.id,
           isRead: false,
