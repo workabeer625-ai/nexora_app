@@ -1,0 +1,36 @@
+{
+  "functions": {
+    "source": "functions"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "nexora-app-2026",
+          "appId": "1:66759143717:android:6a5b20f1930bd404ae2acc",
+          "fileOutput": "android/app/google-services.json"
+        },
+        "buildConfigurations": {
+          ".": {
+            "projectId": "nexora-app-2026",
+            "appId": "1:66759143717:android:6a5b20f1930bd404ae2acc",
+            "fileOutput": "android/app/google-services.json"
+          }
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "nexora-app-2026",
+          "configurations": {
+            "android": "1:66759143717:android:6a5b20f1930bd404ae2acc",
+            "ios": "1:66759143717:ios:16fba7a0a2617316ae2acc"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

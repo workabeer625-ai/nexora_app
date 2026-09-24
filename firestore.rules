@@ -1,0 +1,359 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userUid() {
+      return request.auth.uid;
+    }
+
+    function workspaceDoc(workspaceId) {
+      return /databases/$(database)/documents/workspaces/$(workspaceId);
+    }
+
+    function memberDoc(workspaceId, uid) {
+      return /databases/$(database)/documents/workspaces/$(workspaceId)/members/$(uid);
+    }
+
+    function joinCodeDoc(workspaceId, joinCodeId) {
+      return /databases/$(database)/documents/workspaces/$(workspaceId)/join_codes/$(joinCodeId);
+    }
+
+    function joinRequestDoc(workspaceId, uid) {
+      return /databases/$(database)/documents/workspaces/$(workspaceId)/join_requests/$(uid);
+    }
+
+    function isOwnUser(uid) {
+      return signedIn() && userUid() == uid;
+    }
+
+    function isWorkspaceMember(workspaceId) {
+      return signedIn()
+        && (
+          (
+            exists(memberDoc(workspaceId, userUid()))
+            && get(memberDoc(workspaceId, userUid())).data.status == 'active'
+          )
+          || (
+            exists(workspaceDoc(workspaceId))
+            && get(workspaceDoc(workspaceId)).data.member_ids.hasAny([userUid()])
+          )
+        );
+    }
+
+    function workspaceRole(workspaceId) {
+      return exists(memberDoc(workspaceId, userUid()))
+        ? get(memberDoc(workspaceId, userUid())).data.role
+        : (
+          get(workspaceDoc(workspaceId)).data.owner_id == userUid()
+          ? 'owner'
+          : 'member'
+        );
+    }
+
+    function isWorkspaceAdmin(workspaceId) {
+      return isWorkspaceMember(workspaceId)
+        && (workspaceRole(workspaceId) == 'owner' || workspaceRole(workspaceId) == 'admin');
+    }
+
+    function isWorkspaceOwner(workspaceId) {
+      return isWorkspaceMember(workspaceId)
+        && workspaceRole(workspaceId) == 'owner';
+    }
+
+    function taskDoc(workspaceId, projectId, taskId) {
+      return /databases/$(database)/documents/workspaces/$(workspaceId)/projects/$(projectId)/tasks/$(taskId);
+    }
+
+    function isWorkspaceWritable(workspaceId) {
+      return isWorkspaceMember(workspaceId)
+        && get(workspaceDoc(workspaceId)).data.is_archived == false;
+    }
+
+    function isActiveTask(workspaceId, projectId, taskId) {
+      return exists(taskDoc(workspaceId, projectId, taskId))
+        && get(taskDoc(workspaceId, projectId, taskId)).data.is_archived == false;
+    }
+
+    function hasValidMessageKeys(data) {
+      return data.keys().hasOnly([
+        'id',
+        'sender_id',
+        'sender_name',
+        'sender_avatar',
+        'content',
+        'type',
+        'created_at',
+        'updated_at',
+        'is_edited',
+        'is_deleted',
+        'mentions',
+        'reply_to_message_id'
+      ]);
+    }
+
+    function isMessageCreate(messageId) {
+      return hasValidMessageKeys(request.resource.data)
+        && request.resource.data.id == messageId
+        && request.resource.data.sender_id == userUid()
+        && request.resource.data.sender_name is string
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0
+        && request.resource.data.type == 'text'
+        && request.resource.data.is_edited == false
+        && request.resource.data.is_deleted == false
+        && request.resource.data.mentions is list
+        && request.resource.data.created_at == request.time
+        && request.resource.data.updated_at == request.time;
+    }
+
+    function isAuthorMessageEdit() {
+      return resource.data.sender_id == userUid()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'content',
+          'updated_at',
+          'is_edited',
+          'mentions'
+        ])
+        && request.resource.data.id == resource.data.id
+        && request.resource.data.sender_id == resource.data.sender_id
+        && request.resource.data.sender_name == resource.data.sender_name
+        && request.resource.data.sender_avatar == resource.data.sender_avatar
+        && request.resource.data.type == resource.data.type
+        && request.resource.data.created_at == resource.data.created_at
+        && request.resource.data.reply_to_message_id == resource.data.reply_to_message_id
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0
+        && request.resource.data.mentions is list
+        && request.resource.data.is_deleted == resource.data.is_deleted
+        && request.resource.data.is_deleted == false
+        && request.resource.data.is_edited == true
+        && request.resource.data.updated_at == request.time;
+    }
+
+    function canSoftDeleteMessage(workspaceId) {
+      return (resource.data.sender_id == userUid() || isWorkspaceAdmin(workspaceId))
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'content',
+          'updated_at',
+          'is_deleted',
+          'is_edited',
+          'mentions'
+        ])
+        && request.resource.data.id == resource.data.id
+        && request.resource.data.sender_id == resource.data.sender_id
+        && request.resource.data.sender_name == resource.data.sender_name
+        && request.resource.data.sender_avatar == resource.data.sender_avatar
+        && request.resource.data.type == resource.data.type
+        && request.resource.data.created_at == resource.data.created_at
+        && request.resource.data.reply_to_message_id == resource.data.reply_to_message_id
+        && request.resource.data.content == ''
+        && request.resource.data.mentions is list
+        && request.resource.data.mentions.size() == 0
+        && request.resource.data.is_deleted == true
+        && request.resource.data.updated_at == request.time;
+    }
+
+    function isWorkspaceOwnerBootstrap(workspaceId, memberUid) {
+      return signedIn()
+        && memberUid == userUid()
+        && request.resource.data.workspace_id == workspaceId
+        && request.resource.data.user_id == userUid()
+        && request.resource.data.role == 'owner'
+        && request.resource.data.status == 'active'
+        && getAfter(workspaceDoc(workspaceId)).data.owner_id == userUid()
+        && getAfter(workspaceDoc(workspaceId)).data.member_ids.size() == 1
+        && getAfter(workspaceDoc(workspaceId)).data.member_ids[0] == userUid();
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create: if isOwnUser(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.email == request.auth.token.email;
+      allow update: if isOwnUser(uid)
+        && request.resource.data.uid == resource.data.uid;
+      allow delete: if false;
+
+      match /notifications/{notificationId} {
+        allow read, update: if isOwnUser(uid);
+        allow create: if signedIn() && request.resource.data.user_id == uid;
+        allow delete: if false;
+      }
+    }
+
+    match /workspaces/{workspaceId} {
+      allow read: if signedIn()
+        && resource.data.member_ids.hasAny([userUid()]);
+      allow create: if signedIn()
+        && request.resource.data.owner_id == userUid()
+        && request.resource.data.member_ids.size() == 1
+        && request.resource.data.member_ids[0] == userUid()
+        && request.resource.data.member_count == 1;
+      allow update: if isWorkspaceAdmin(workspaceId)
+        && request.resource.data.id == resource.data.id
+        && request.resource.data.owner_id == resource.data.owner_id
+        && request.resource.data.member_ids.size() >= 1
+        && request.resource.data.member_count >= 1;
+      allow delete: if false;
+
+      match /chat_messages/{messageId} {
+        allow read: if isWorkspaceMember(workspaceId);
+        allow create: if isWorkspaceWritable(workspaceId)
+          && isMessageCreate(messageId);
+        allow update: if isWorkspaceWritable(workspaceId)
+          && (isAuthorMessageEdit() || canSoftDeleteMessage(workspaceId));
+        allow delete: if false;
+      }
+
+      match /members/{memberUid} {
+        allow read: if isWorkspaceMember(workspaceId) || isOwnUser(memberUid);
+        allow create: if isWorkspaceOwnerBootstrap(workspaceId, memberUid)
+          || (
+            isWorkspaceAdmin(workspaceId)
+            && request.resource.data.workspace_id == workspaceId
+            && request.resource.data.user_id == memberUid
+            && request.resource.data.role == 'member'
+            && request.resource.data.status == 'active'
+            && request.resource.data.source == 'join_code_request'
+            && request.resource.data.join_request_id == memberUid
+            && existsAfter(joinRequestDoc(workspaceId, memberUid))
+            && getAfter(joinRequestDoc(workspaceId, memberUid)).data.status == 'approved'
+          );
+        allow update: if isWorkspaceAdmin(workspaceId)
+          && request.resource.data.workspace_id == resource.data.workspace_id
+          && request.resource.data.user_id == resource.data.user_id;
+        allow delete: if isWorkspaceOwner(workspaceId);
+      }
+
+      match /join_codes/{joinCodeId} {
+        allow get, list: if isWorkspaceAdmin(workspaceId);
+        allow create, update: if isWorkspaceAdmin(workspaceId)
+          && request.resource.data.workspace_id == workspaceId
+          && request.resource.data.max_uses >= 1
+          && request.resource.data.used_count >= 0;
+        allow delete: if false;
+      }
+
+      match /join_requests/{requestUserId} {
+        allow read: if isOwnUser(requestUserId) || isWorkspaceAdmin(workspaceId);
+        allow create: if isOwnUser(requestUserId)
+          && request.resource.data.user_id == requestUserId
+          && request.resource.data.workspace_id == workspaceId
+          && request.resource.data.status == 'pending'
+          && request.resource.data.requested_via in ['manual_code', 'qr_scan', 'qr_gallery']
+          && (
+            !exists(memberDoc(workspaceId, requestUserId))
+            || get(memberDoc(workspaceId, requestUserId)).data.status != 'active'
+          )
+          && (
+            !exists(joinRequestDoc(workspaceId, requestUserId))
+            || get(joinRequestDoc(workspaceId, requestUserId)).data.status != 'pending'
+          )
+          && exists(joinCodeDoc(workspaceId, request.resource.data.join_code_snapshot.join_code_id))
+          && get(joinCodeDoc(workspaceId, request.resource.data.join_code_snapshot.join_code_id)).data.code_normalized
+            == request.resource.data.join_code_snapshot.code_normalized
+          && get(joinCodeDoc(workspaceId, request.resource.data.join_code_snapshot.join_code_id)).data.is_active == true
+          && get(joinCodeDoc(workspaceId, request.resource.data.join_code_snapshot.join_code_id)).data.expires_at > request.time
+          && get(joinCodeDoc(workspaceId, request.resource.data.join_code_snapshot.join_code_id)).data.used_count
+            < get(joinCodeDoc(workspaceId, request.resource.data.join_code_snapshot.join_code_id)).data.max_uses;
+        allow update: if isWorkspaceAdmin(workspaceId)
+          && requestUserId == resource.data.user_id
+          && request.resource.data.user_id == resource.data.user_id
+          && request.resource.data.workspace_id == resource.data.workspace_id
+          && request.resource.data.requested_at == resource.data.requested_at
+          && request.resource.data.join_code_snapshot == resource.data.join_code_snapshot
+          && request.resource.data.requested_via == resource.data.requested_via
+          && request.resource.data.note == resource.data.note
+          && request.resource.data.user_display_name_snapshot == resource.data.user_display_name_snapshot
+          && request.resource.data.user_email_snapshot == resource.data.user_email_snapshot
+          && request.resource.data.reviewed_by == userUid()
+          && request.resource.data.reviewed_at == request.time
+          && resource.data.status == 'pending'
+          && (
+            (
+              request.resource.data.status == 'approved'
+              && existsAfter(memberDoc(workspaceId, requestUserId))
+              && getAfter(memberDoc(workspaceId, requestUserId)).data.status == 'active'
+              && getAfter(memberDoc(workspaceId, requestUserId)).data.source == 'join_code_request'
+              && getAfter(workspaceDoc(workspaceId)).data.member_ids.hasAny([requestUserId])
+              && getAfter(joinCodeDoc(workspaceId, resource.data.join_code_snapshot.join_code_id)).data.used_count
+                == get(joinCodeDoc(workspaceId, resource.data.join_code_snapshot.join_code_id)).data.used_count + 1
+            )
+            || request.resource.data.status == 'rejected'
+          );
+        allow delete: if false;
+      }
+
+      match /tasks/{taskId} {
+        allow read, create, update: if isWorkspaceMember(workspaceId);
+        allow delete: if false;
+
+        match /comments/{commentId} {
+          allow read: if isWorkspaceMember(workspaceId);
+          allow create: if isWorkspaceMember(workspaceId)
+            && request.resource.data.author_id == userUid();
+          allow update: if isWorkspaceMember(workspaceId)
+            && resource.data.author_id == userUid();
+          allow delete: if false;
+        }
+      }
+
+      match /projects/{projectId} {
+        allow read: if isWorkspaceMember(workspaceId);
+        allow create, update: if isWorkspaceAdmin(workspaceId);
+        allow delete: if false;
+
+        match /tasks/{taskId} {
+          allow read, create, update: if isWorkspaceMember(workspaceId);
+          allow delete: if false;
+
+          match /comments/{commentId} {
+            allow read: if isWorkspaceMember(workspaceId);
+            allow create: if isWorkspaceMember(workspaceId)
+              && request.resource.data.author_id == userUid();
+            allow update: if isWorkspaceMember(workspaceId)
+              && resource.data.author_id == userUid();
+            allow delete: if false;
+          }
+
+          match /messages/{messageId} {
+            allow read: if isWorkspaceMember(workspaceId)
+              && isActiveTask(workspaceId, projectId, taskId);
+            allow create: if isWorkspaceWritable(workspaceId)
+              && isActiveTask(workspaceId, projectId, taskId)
+              && isMessageCreate(messageId);
+            allow update: if isWorkspaceWritable(workspaceId)
+              && isActiveTask(workspaceId, projectId, taskId)
+              && (isAuthorMessageEdit() || canSoftDeleteMessage(workspaceId));
+            allow delete: if false;
+          }
+        }
+      }
+    }
+
+    match /{documentPath=**}/tasks/{taskId} {
+      allow read: if signedIn()
+        && resource.data.workspace_id is string
+        && isWorkspaceMember(resource.data.workspace_id);
+      allow create, update, delete: if false;
+    }
+
+    match /join_code_lookup/{codeNormalized} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if signedIn()
+        && request.resource.data.code_normalized == codeNormalized
+        && isWorkspaceAdmin(request.resource.data.workspace_id);
+      allow update: if signedIn()
+        && resource.data.code_normalized == codeNormalized
+        && request.resource.data.code_normalized == resource.data.code_normalized
+        && request.resource.data.workspace_id == resource.data.workspace_id
+        && request.resource.data.join_code_id == resource.data.join_code_id
+        && isWorkspaceAdmin(resource.data.workspace_id);
+      allow delete: if false;
+    }
+  }
+}

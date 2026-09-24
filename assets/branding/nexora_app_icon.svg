@@ -1,0 +1,54 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="tile">
+      <rect x="46" y="46" width="932" height="932" rx="220" />
+    </clipPath>
+    <linearGradient id="bg" x1="142" y1="112" x2="884" y2="910" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#121C34" />
+      <stop offset="0.55" stop-color="#0C1426" />
+      <stop offset="1" stop-color="#060B16" />
+    </linearGradient>
+    <linearGradient id="n" x1="248" y1="512" x2="776" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#38BDF8" />
+      <stop offset="0.55" stop-color="#4F46E5" />
+      <stop offset="1" stop-color="#8B5CF6" />
+    </linearGradient>
+    <radialGradient id="glowBlue" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(286 216) rotate(32) scale(296 252)">
+      <stop stop-color="#38BDF8" stop-opacity="0.24" />
+      <stop offset="1" stop-color="#38BDF8" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowPurple" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(762 748) rotate(20) scale(344 312)">
+      <stop stop-color="#8B5CF6" stop-opacity="0.2" />
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0" />
+    </radialGradient>
+    <filter id="blurLarge" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="54" />
+    </filter>
+    <filter id="blurSoft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="28" />
+    </filter>
+  </defs>
+  <g clip-path="url(#tile)">
+    <rect width="1024" height="1024" fill="#0B1120" />
+    <rect width="1024" height="1024" fill="url(#bg)" />
+    <ellipse cx="286" cy="216" rx="248" ry="220" fill="url(#glowBlue)" filter="url(#blurLarge)" />
+    <ellipse cx="764" cy="756" rx="290" ry="266" fill="url(#glowPurple)" filter="url(#blurLarge)" />
+    <ellipse cx="532" cy="96" rx="360" ry="180" fill="white" fill-opacity="0.06" filter="url(#blurLarge)" />
+    <g filter="url(#blurSoft)" opacity="0.34">
+      <rect x="248" y="224" width="140" height="576" rx="70" fill="url(#n)" />
+      <rect x="636" y="224" width="140" height="576" rx="70" fill="url(#n)" />
+      <path d="M400 348L624 680" stroke="url(#n)" stroke-width="150" stroke-linecap="round" />
+    </g>
+    <g>
+      <rect x="248" y="224" width="140" height="576" rx="70" fill="url(#n)" />
+      <rect x="636" y="224" width="140" height="576" rx="70" fill="url(#n)" />
+      <path d="M400 348L624 680" stroke="url(#n)" stroke-width="150" stroke-linecap="round" />
+    </g>
+    <g opacity="0.2" filter="url(#blurSoft)">
+      <ellipse cx="360" cy="314" rx="250" ry="210" fill="white" />
+    </g>
+    <g opacity="0.14" filter="url(#blurSoft)">
+      <ellipse cx="674" cy="684" rx="240" ry="232" fill="#040812" />
+    </g>
+  </g>
+</svg>
